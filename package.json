@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha tests --exit",
     "testing": "mocha tests --watch",
-    "start": "node index"
+    "start": "node index",
+    "db": "./deploy_test_db.sh"
   },
   "author": "",
   "license": "ISC",
