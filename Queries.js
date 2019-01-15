@@ -11,8 +11,6 @@ mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
-
-
 const Comment = new Schema({
     _id: ObjectId,
     text: String,
