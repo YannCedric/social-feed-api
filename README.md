@@ -1,4 +1,4 @@
-# Social Feed API 
+# Social Feed API - [![Build Status](https://travis-ci.com/YannCedric/social-feed-api.svg?branch=master)](https://travis-ci.com/YannCedric/social-feed-api)
 
 Simple social feed api, providing basic functionality!
 

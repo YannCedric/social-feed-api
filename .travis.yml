@@ -5,4 +5,7 @@ services:
 
 script: 
 - node -v
-- docker -v
+- npm run db
+- sleep 10
+- echo 'db.stats().ok' | mongo localhost:8080/test --quiet
+- npm run test
