@@ -3,6 +3,9 @@ services:
 - docker
 - nodejs
 
+node_js:
+  - "10"
+
 script: 
 - node -v
 - npm run db
