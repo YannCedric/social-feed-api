@@ -7,6 +7,7 @@
     "test": "mocha tests --exit",
     "testing": "mocha tests --watch",
     "start": "node index",
+    "dev": "nodemon index",
     "db": "./deploy_test_db.sh"
   },
   "author": "",
@@ -14,13 +15,16 @@
   "dependencies": {
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "express-graphql": "^0.9.0",
     "fancy-log": "^1.3.3",
+    "graphql": "^14.4.2",
     "mongoose": "^5.4.3",
     "yargs": "^12.0.5"
   },
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nodemon": "^1.19.1"
   }
 }
