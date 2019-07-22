@@ -6,10 +6,12 @@ const {
 } = require('graphql')
 
 const {
-    UserType
+    UserType,
+    PostType,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
+const PostsController = require('../controllers/Posts')
 
 
 const User = {
@@ -33,7 +35,30 @@ const Users = {
     }
 }
 
+const Post = {
+    type: PostType,
+    args: { id: {type: new GraphQLNonNull(GraphQLID)} },
+    resolve: (_, {id}) =>PostsController.FindPostById(id)
+}
+
+const Posts = {
+    type: new GraphQLList(PostType),
+    args: { 
+        from: {type: GraphQLID}, 
+        limit: {type: GraphQLInt},
+    },
+    resolve: (_, {from, limit=10}) => {
+        if (from)
+            return PostsController.FindPostsWithPaging(from, limit)
+        else
+            return PostsController.FindPosts()
+    }
+}
+
 module.exports = {
     User,
     Users,
+    
+    Post,
+    Posts,
 }

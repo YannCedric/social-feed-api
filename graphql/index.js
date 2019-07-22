@@ -6,11 +6,15 @@ const {
 const {
     User,
     Users,
+    Post,
+    Posts,
 } = require('./queries')
 
 const {
     CreateUser,
     UpdateUser,
+    CreatePost,
+    UpdatePost,
 } = require('./mutations')
 
 const schema = new GraphQLSchema({
@@ -19,6 +23,8 @@ const schema = new GraphQLSchema({
         fields: {
             User,
             Users,
+            Post,
+            Posts,
         }
     }),
     mutation: new GraphQLObjectType({
@@ -26,6 +32,8 @@ const schema = new GraphQLSchema({
         fields: {
             CreateUser,
             UpdateUser,
+            CreatePost,
+            UpdatePost,
         }
     })
 })

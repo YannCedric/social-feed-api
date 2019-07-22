@@ -26,31 +26,27 @@ const User = new Schema({
     followingIds: [ObjectId],
 })
 
-const Tag = new Schema({
-    value: String,
-    icon: String,
-    description: String,
-})
-
 const Comment = new Schema({
-    text: String,
-    postId: ObjectId,
-    likes: [ObjectId],
-    dislikes: [ObjectId],
-    authorId: ObjectId,
+    text: {type: String, required: true},
+    postId: {type: ObjectId, required: true},
+    likersIds: [ObjectId],
+    dislikersIds: [ObjectId],
+    authorId: {type: ObjectId, required: true},
 })
 
 const Post = new Schema({
-    text: String,
+    text: {type: String, required: true},
     picture: String,
-    authorId: ObjectId,
-    commentIds: [ObjectId],
-    tagIds: [ObjectId],
+    tags: [String],
+    authorId: {type: ObjectId, required: true},
+    commentsIds: [ObjectId],
+    likersIds: [ObjectId],
+    dislikersIds: [ObjectId],
+    tagsIds: [ObjectId],
 })
 
 module.exports = {
     Users: mongoose.model('Users', User),
     Comments: mongoose.model('Comments', Comment), 
     Posts: mongoose.model('Posts', Post),
-    Tags: mongoose.model('Tags', Tag),
 }

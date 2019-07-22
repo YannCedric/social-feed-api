@@ -16,7 +16,6 @@ app.use('/graphql', graphqlHTTP(req => ({
     graphiql: true,
     context: {
         ...req,
-        yann: "name",
     }
     })    
 )) 
