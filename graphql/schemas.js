@@ -1,6 +1,7 @@
 const {
     GraphQLObjectType,
     GraphQLString,
+    GraphQLID,
 } = require('graphql')
 
 const UsersController = require('../controllers/Users')
@@ -8,6 +9,7 @@ const UsersController = require('../controllers/Users')
 const UserType = new GraphQLObjectType({
     name: 'User',
     fields: _ => ({
+        id: {type: GraphQLID},
         fullname: {type: GraphQLString},
         email: {type: GraphQLString},
         username: {type: GraphQLString},

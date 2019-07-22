@@ -2,6 +2,7 @@ const {
     GraphQLList,
     GraphQLID,
     GraphQLNonNull,
+    GraphQLInt,
 } = require('graphql')
 
 const {
@@ -20,7 +21,16 @@ const User = {
 // TODO: Implement args search
 const Users = {
     type: new GraphQLList(UserType),
-    resolve: _ => UsersController.FindUsers()
+    args: { 
+        from: {type: GraphQLID}, 
+        limit: {type: GraphQLInt},
+    },
+    resolve: (_, {from, limit=10}) => {
+        if (from)
+            return UsersController.FindUsersWithPaging(from, limit)
+        else
+            return UsersController.FindUsers()
+    }
 }
 
 module.exports = {

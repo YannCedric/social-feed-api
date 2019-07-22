@@ -6,6 +6,7 @@ ls $(pwd)/data || mkdir $(pwd)/data
 
 docker run --name db \
             -v $(pwd)/data:/data/db \
+            --network mongonet \
             -p 8080:27017\
             -e MONGO_INITDB_DATABASE=admin \
             -e MONGO_INITDB_ROOT_USERNAME=test \

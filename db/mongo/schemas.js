@@ -16,6 +16,16 @@ mongoose.set('useNewUrlParser', true);
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
+const User = new Schema({
+    fullname: String,
+    email: {type: String, required: true, unique: true},
+    username: {type: String, required: true, unique: true},
+    picture: String,
+    bio: String,
+    followersIds: [ObjectId],
+    followingIds: [ObjectId],
+})
+
 const Tag = new Schema({
     value: String,
     icon: String,
@@ -36,16 +46,6 @@ const Post = new Schema({
     authorId: ObjectId,
     commentIds: [ObjectId],
     tagIds: [ObjectId],
-})
-
-const User = new Schema({
-    fullName: String,
-    email: {type: String, required: true, unique: true},
-    username: {type: String, required: true, unique: true},
-    picture: String,
-    bio: String,
-    followersIds: [ObjectId],
-    followingIds: [ObjectId],
 })
 
 module.exports = {

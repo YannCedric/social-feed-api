@@ -1,11 +1,17 @@
 const {
-    Upsert,
+    Create,
     Find,
+    FindWithPaging,
     FindById,
+    FindAllByIds,
+    Update,
 } = require('./mongo/queries')
 
 module.exports = {
-    Upsert,
+    Create,
     Find,
+    FindWithPaging,
     FindById,
+    FindAllByIds,
+    Update,
 }
