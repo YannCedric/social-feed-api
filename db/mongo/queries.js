@@ -50,9 +50,7 @@ const getDb = dbName => {
             return Posts
         case 'comments':
             return Comments
-        case 'tags':
-            return Tags
         default: 
-            throw Error(`Database "${dbName}" is not defined`)
+            throw Error(`Database "${dbName}" is not handled`)
     }
 }

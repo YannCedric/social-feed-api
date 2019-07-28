@@ -41,11 +41,13 @@ const UpdateUser = {
 const CreatePost = { // Protected Route
     type: PostType,
     args: {
-        text: {type: GraphQLString},
+        text: {type: new GraphQLNonNull(GraphQLString)},
         picture: {type: GraphQLString},
         tags: {type: new GraphQLList(GraphQLString)},
     },
-    resolve: (_, args, context) => PostsController.CreatePost({...args, authorId: context.headers.bearerID})
+    resolve: (_, args, context) => {
+        return PostsController.CreatePost({...args, authorId: context.headers.bearerid})
+    }
 }
 
 const UpdatePost = {
