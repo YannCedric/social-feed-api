@@ -8,6 +8,7 @@ const {
 const {
     UserType,
     PostType,
+    CommentType,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
@@ -61,9 +62,20 @@ const UpdatePost = {
     resolve: (_, args) => PostsController.UpdatePost(args)
 }
 
+const MakeComment = { // Protected Route
+    type: CommentType,
+    args: {
+        postId: {type: new GraphQLNonNull(GraphQLID)},
+        text: {type: new GraphQLNonNull(GraphQLString)},
+        picture: {type: GraphQLString},
+    },
+    resolve: (_, args, context) => PostsController.MakeComment({...args, authorId: context.headers.bearerid})
+}
+
 module.exports = {
     CreateUser,
     UpdateUser,
     CreatePost,
     UpdatePost,
+    MakeComment,
 }

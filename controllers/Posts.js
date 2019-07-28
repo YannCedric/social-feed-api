@@ -14,6 +14,11 @@ class Posts {
     static async UpdatePost(data) {
         return Update('posts', data)
     }
+    static async MakeComment(data) {
+        const newComment = await Create('comments', data)
+        Update('posts', {id: newComment.postId, $push:{commentsIds: newComment.id}})
+        return newComment
+    }
     static async FindPosts(query){
         return Find('posts',query)
     }

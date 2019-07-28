@@ -91,4 +91,5 @@ const CommentType = new GraphQLObjectType({
 module.exports = {
     UserType,
     PostType,
+    CommentType,
 }

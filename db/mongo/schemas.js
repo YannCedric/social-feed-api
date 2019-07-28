@@ -28,6 +28,7 @@ const User = new Schema({
 
 const Comment = new Schema({
     text: {type: String, required: true},
+    picture: String,
     postId: {type: ObjectId, required: true},
     likersIds: [ObjectId],
     dislikersIds: [ObjectId],
