@@ -14,6 +14,9 @@ class Posts {
     static async UpdatePost(data) {
         return Update('posts', data)
     }
+    static async UpdateComment(data) {
+        return Update('comments', data)
+    }
     static async MakeComment(data) {
         const newComment = await Create('comments', data)
         Update('posts', {id: newComment.postId, $push:{commentsIds: newComment.id}})

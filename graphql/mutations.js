@@ -51,7 +51,7 @@ const CreatePost = { // Protected Route
     }
 }
 
-const UpdatePost = {
+const UpdatePost = { // Protected Route
     type: PostType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -72,10 +72,21 @@ const MakeComment = { // Protected Route
     resolve: (_, args, context) => PostsController.MakeComment({...args, authorId: context.headers.bearerid})
 }
 
+const EditComment = { // Protected Route
+    type: CommentType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        text: {type: GraphQLString},
+        picture: {type: GraphQLString},
+    },
+    resolve: (_, args, context) => PostsController.UpdateComment(args)
+}
+
 module.exports = {
     CreateUser,
     UpdateUser,
     CreatePost,
     UpdatePost,
     MakeComment,
+    EditComment,
 }

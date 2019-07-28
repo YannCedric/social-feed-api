@@ -16,6 +16,7 @@ const {
     CreatePost,
     UpdatePost,
     MakeComment,
+    EditComment,
 } = require('./mutations')
 
 const schema = new GraphQLSchema({
@@ -36,6 +37,7 @@ const schema = new GraphQLSchema({
             CreatePost,
             UpdatePost,
             MakeComment,
+            EditComment,
         }
     })
 })

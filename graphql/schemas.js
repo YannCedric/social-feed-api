@@ -64,7 +64,10 @@ const CommentType = new GraphQLObjectType({
     fields: _ => ({
         id: {type: GraphQLID},
         text: {type: GraphQLString},
-        postId: {type: GraphQLString},
+        post: {
+            type: PostType,
+            resolve: ({postId}, args, context) => PostsController.FindPostById(postId)
+        },
         likers: {
             type: new GraphQLList(UserType),
             resolve: ({likersIds}, args, context) => UsersController.FindAllUsersByIds(likersIds)
