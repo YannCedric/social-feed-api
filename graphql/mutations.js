@@ -17,13 +17,17 @@ const PostsController = require('../controllers/Posts')
 const CreateUser = {
     type: UserType,
     args: { 
+        email: {type: new GraphQLNonNull(GraphQLString)},
+        username: {type: new GraphQLNonNull(GraphQLString)},
         fullname: {type: GraphQLString},
-        email: {type: GraphQLString},
-        username: {type: GraphQLString},
         picture: {type: GraphQLString},
         bio: {type: GraphQLString}, 
     },
-    resolve: (_, args) => UsersController.CreateUser(args)
+    resolve: async (_, args, context) => {
+        const newUser = await UsersController.CreateUser(args)
+        context.pubsub.publish('user', {UsersSub: newUser})
+        return newUser
+    }
 }
 
 const UpdateUser = {

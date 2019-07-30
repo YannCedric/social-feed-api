@@ -19,6 +19,10 @@ const {
     EditComment,
 } = require('./mutations')
 
+const {
+    UsersSub,
+} = require('./subscriptions')
+
 const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
         name: 'RootQuery',
@@ -38,8 +42,14 @@ const schema = new GraphQLSchema({
             UpdatePost,
             MakeComment,
             EditComment,
+        },
+    }),
+    subscription: new GraphQLObjectType({
+        name: 'RootSub',
+        fields: {
+            UsersSub,
         }
-    })
+    }),
 })
 
 module.exports = {schema}
