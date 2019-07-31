@@ -1,12 +1,7 @@
 const mongoose = require('mongoose')
-const {
-    MONGO_ADDRESS,
-    USERNAME,
-    DB_PASS,
-    DB_PORT,
-    AUTH_DB, } = require('./secrets')
+const {MONGO_URI} = require('./secrets')
 
-mongoose.connect(`mongodb://${USERNAME}:${DB_PASS}@${MONGO_ADDRESS}:${DB_PORT}/${AUTH_DB}`, {useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false})
+mongoose.connect(MONGO_URI, {useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false})
         .then( _ => console.log('Successful Database connection'))
         .catch( err => console.error('Database authentication error !', err))
         

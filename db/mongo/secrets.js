@@ -4,6 +4,7 @@ const {
     DB_PASS='test',
     DB_PORT=8080,
     AUTH_DB='admin',
+    MONGO_URI=`mongodb://${USERNAME}:${DB_PASS}@${MONGO_ADDRESS}:${DB_PORT}/${AUTH_DB}`
 } = process.env
 
 module.exports = {
@@ -11,5 +12,6 @@ module.exports = {
     USERNAME,
     DB_PASS,
     DB_PORT,
-    AUTH_DB
+    AUTH_DB,
+    MONGO_URI,
 }
