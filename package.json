@@ -7,8 +7,7 @@
     "test": "mocha tests --exit --reporter spec",
     "testing": "mocha tests --watch --reporter nyan" ,
     "start": "node index",
-    "dev": "nodemon index",
-    "db": "./deploy_test_db.sh"
+    "dev": "nodemon index"
   },
   "author": "",
   "license": "ISC",
