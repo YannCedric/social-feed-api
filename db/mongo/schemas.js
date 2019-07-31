@@ -42,7 +42,7 @@ const Post = new Schema({
 })
 
 module.exports = {
-    Users: mongoose.model('Users', User),
-    Comments: mongoose.model('Comments', Comment), 
-    Posts: mongoose.model('Posts', Post),
+    Users: mongoose.models.Users || mongoose.model('Users', User),
+    Comments: mongoose.models.Comments || mongoose.model('Comments', Comment), 
+    Posts: mongoose.models.Posts || mongoose.model('Posts', Post),
 }
