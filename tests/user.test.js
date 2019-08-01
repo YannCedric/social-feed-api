@@ -1,7 +1,7 @@
 process.env.LOG_LEVEL = "off"
 
 const {expect} = require('chai')
-const {envSetup, createUsers} = require('./helpers')
+const {envSetup, createUsers, withHeaders} = require('./helpers')
 
 let Mutate, Query, Server; // Shared variables
 
@@ -11,9 +11,9 @@ before( async () => {
   Mutate = mutate;
   Query = query;
   Server = server;
-
+  
+  // Server = withHeaders(server, {name:"foo"})
   // const {User1, User2, User3} = await createUsers(3, mutate)
-  // console.log({User1, User2, User3})
 })
 
 after( () => {

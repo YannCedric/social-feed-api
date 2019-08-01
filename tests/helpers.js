@@ -15,7 +15,7 @@ module.exports.envSetup = async function () {
       return {query, mutate, server}
 }
 
-module.exports.createUsers = async function (count=1, mutate){
+module.exports.createUsers = async function (count=1, mutate){ // Creates the number of required users
   let builder = ''
   for(let i=1; i<= count; i++){
     builder += `
@@ -34,4 +34,13 @@ module.exports.createUsers = async function (count=1, mutate){
 
   const res = await mutate( {mutation: CREATE_USER_QUERY} )
   return res.data
+}
+
+module.exports.withHeaders = function (server, headers){ // Wraps the server and add headers
+  const ctx = server.context({})
+
+  const newCtx =  _ => ({...ctx, headers: {...ctx.headers, ...headers}}) 
+
+  server.context = newCtx
+  return server;
 }
