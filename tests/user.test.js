@@ -1,9 +1,27 @@
-const {TestSetup} = require('./setup')
+process.env.LOG_LEVEL = "off"
+
 const {expect} = require('chai')
+const {envSetup, createUsers} = require('./helpers')
+
+let Mutate, Query, Server; // Shared variables
+
+before( async () => {
+  const {query, mutate, server} = await envSetup()
+
+  Mutate = mutate;
+  Query = query;
+  Server = server;
+
+  // const {User1, User2, User3} = await createUsers(3, mutate)
+  // console.log({User1, User2, User3})
+})
+
+after( () => {
+  if(Server) Server.stop()
+})
 
 describe('🧪 - CreateUser', async _ => {
   it('- Create require email field', async () => {
-    const { query, mutate }  = await TestSetup()
     const CREATE_USER = `mutation{
         CreateUser(username:"jon",fullname:"jondoe") {
           id
@@ -12,13 +30,12 @@ describe('🧪 - CreateUser', async _ => {
           fullname
         }
     }`
-    const res = await mutate( {mutation: CREATE_USER} )
+    const res = await Mutate( {mutation: CREATE_USER} )
     expect(res.data).to.be.undefined
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
   })
 
   it('- Create require username field', async () => {
-    const { query, mutate }  = await TestSetup()
     const CREATE_USER = `mutation{
         CreateUser(email:"jon",fullname:"jondoe") {
           id
@@ -27,14 +44,15 @@ describe('🧪 - CreateUser', async _ => {
           fullname
         }
     }`
-    const res = await mutate( {mutation: CREATE_USER} )
+    const res = await Mutate( {mutation: CREATE_USER} )
     expect(res.data).to.be.undefined
     expect(res.errors[0].message).to.contain(`argument "username" of type "String!" is required, but it was not provided`)
   })
 
   let NewUser = {}
   it('- Create user properly with fields', async () => {
-    const { query, mutate }  = await TestSetup()
+    Server.context = _ => ({headers: "meet"}) // pass some headers this way
+    
     const CREATE_USER = `mutation{
         CreateUser(email: "jondoe@mail.com",username:"jon",fullname:"jondoe") {
           id
@@ -43,7 +61,7 @@ describe('🧪 - CreateUser', async _ => {
           fullname
         }
     }`
-    const res = await mutate( {mutation: CREATE_USER} )
+    const res = await Mutate( {mutation: CREATE_USER} )
 
     expect(res.data.CreateUser).to.be.a('object')
     expect(res.data.CreateUser.id).to.be.not.null
@@ -54,7 +72,6 @@ describe('🧪 - CreateUser', async _ => {
   })
 
   it('- Find user', async () => {
-    const { query, mutate }  = await TestSetup({logs: true})
     const FETCH_USER = `query{
         User(id:"${NewUser.id}") {
           id
@@ -63,7 +80,7 @@ describe('🧪 - CreateUser', async _ => {
           fullname
         }
     }`
-    const res = await query( {query: FETCH_USER} )
+    const res = await Query( {query: FETCH_USER} )
     expect(res.data.User).to.be.a('object')
     expect(res.data.User.id).to.be.not.null
     expect(res.data.User.email).to.equal('jondoe@mail.com')
@@ -72,13 +89,12 @@ describe('🧪 - CreateUser', async _ => {
   })
 
   it('- Update (username)', async () => {
-    const { query, mutate }  = await TestSetup({headers: {bearerid: NewUser.id}})
     const UPDATE_USER = `mutation{
         UpdateUser(id:"${NewUser.id}", username:"newname") {
           username
         }
     }`
-    const res = await query( {query: UPDATE_USER} )
+    const res = await Query( {query: UPDATE_USER} )
     expect(res.data.UpdateUser).to.be.a('object')
     expect(res.data.UpdateUser.username).to.equal('newname')
   })

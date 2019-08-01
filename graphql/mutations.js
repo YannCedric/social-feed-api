@@ -25,7 +25,7 @@ const CreateUser = {
     },
     resolve: async (_, args, context) => {
         const newUser = await UsersController.CreateUser(args)
-        context.pubsub.publish('user', {UsersSub: newUser})
+        if (context.pubsub) context.pubsub.publish('user', {UsersSub: newUser})
         return newUser
     }
 }

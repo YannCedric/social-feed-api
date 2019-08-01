@@ -5,6 +5,9 @@ const {ApolloServer} = require('apollo-server')
     , { p = 8000, port = p } = argv
     , {schema} = require('./graphql')
     , pubsub = new PubSub()
+    , logger = require('./logger')
+
+logger.level = process.env.LOG_LEVEL || 'trace'
 
 const server = new ApolloServer({
   schema,
@@ -15,7 +18,7 @@ const server = new ApolloServer({
 });
 
 server.listen(port).then(({ url }) => {
-  console.log(`Server ready at ${url} 🚀`);
+  logger.info(`Server ready at ${url} 🚀`);
 });
 
 module.exports = {server}

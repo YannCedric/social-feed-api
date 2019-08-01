@@ -1,9 +1,10 @@
 const mongoose = require('mongoose')
 const {MONGO_URI} = require('./secrets')
+const logger = require('../../logger')
 
 mongoose.connect(MONGO_URI, {useNewUrlParser: true, useCreateIndex: true, useFindAndModify: false})
-        .then( _ => console.log('Successful Database connection'))
-        .catch( err => console.error('Database authentication error !', err))
+        .then( _ => logger.info('Successful Database connection'))
+        .catch( err => logger.fatal('Database authentication error !', err))
         
 mongoose.set('useFindAndModify', false);
 mongoose.set('useNewUrlParser', true);
