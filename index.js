@@ -4,6 +4,7 @@ const {ApolloServer} = require('apollo-server')
     
     , { p = 8000, port = p } = argv
     , {schema} = require('./graphql')
+    , UsersController = require('./controllers/Users')
     , pubsub = new PubSub()
     , logger = require('./logger')
 
@@ -14,11 +15,12 @@ const server = new ApolloServer({
   context: ({req}) => ({
       headers: req ? req.headers : null, // for mutation errors
       pubsub,
+      bearerId: UsersController.Authenticate(req),
     })
 });
 
 server.listen(port).then(({ url }) => {
-  logger.info(`Server ready at ${url} 🚀`);
+  logger.info(`🚀 - Server ready at ${url}`);
 });
 
 module.exports = {server}

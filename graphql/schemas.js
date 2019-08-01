@@ -9,6 +9,14 @@ const {
 const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
 
+const AuthType = new GraphQLObjectType({
+    name: 'Auth',
+    fields: _=> ({
+        User: {type: UserType},
+        token: {type: GraphQLString},
+    })
+})
+
 const UserType = new GraphQLObjectType({
     name: 'User',
     fields: _ => ({
@@ -95,4 +103,5 @@ module.exports = {
     UserType,
     PostType,
     CommentType,
+    AuthType,
 }

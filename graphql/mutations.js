@@ -9,24 +9,27 @@ const {
     UserType,
     PostType,
     CommentType,
+    AuthType,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
 
 const CreateUser = {
-    type: UserType,
+    type: AuthType,
     args: { 
         email: {type: new GraphQLNonNull(GraphQLString)},
-        username: {type: new GraphQLNonNull(GraphQLString)},
+        password: {type: new GraphQLNonNull(GraphQLString)},
+        username: {type: GraphQLString},
         fullname: {type: GraphQLString},
         picture: {type: GraphQLString},
         bio: {type: GraphQLString}, 
     },
     resolve: async (_, args, context) => {
-        const newUser = await UsersController.CreateUser(args)
-        if (context.pubsub) context.pubsub.publish('user', {UsersSub: newUser})
-        return newUser
+        const User = await UsersController.CreateUser(args)
+        const token = UsersController.ProvideToken(User.id)  
+        if (context.pubsub) context.pubsub.publish('user', {UsersSub: User})
+        return {User, token}
     }
 }
 

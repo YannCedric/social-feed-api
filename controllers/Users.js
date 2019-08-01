@@ -1,3 +1,5 @@
+const jwt = require('jsonwebtoken')
+
 const {
     Find,
     FindWithPaging,
@@ -6,6 +8,12 @@ const {
     FindAllByIds,
     Create, 
 } = require('../db')
+
+const TOKEN_SECRET = "weak-a-secret"
+const TOKEN_EXPIRY = "24h"
+
+const PASSWORDS_SECRET = "weak-a-secret"
+const SALT_ROUNDS = 11
 
 class Users {
     static async CreateUser(user) {
@@ -25,6 +33,15 @@ class Users {
     }
     static async FindAllUsersByIds(ids){
         return FindAllByIds('users',ids)
+    }
+    static async Authenticate(req){
+        if(req && req.headers && req.headers.token) {
+            let {bearerId} = jwt.verify(req.headers.token)
+            return bearerId
+        }
+    }
+    static async ProvideToken(payload){
+       return jwt.sign({payload}, TOKEN_SECRET, {expiresIn:TOKEN_EXPIRY})
     }
 }
 

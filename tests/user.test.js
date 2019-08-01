@@ -5,7 +5,7 @@ const {envSetup, createUsers, withHeaders} = require('./helpers')
 
 let Mutate, Query, Server; // Shared variables
 
-before( async () => {
+beforeEach( async () => {
   const {query, mutate, server} = await envSetup()
 
   Mutate = mutate;
@@ -16,18 +16,20 @@ before( async () => {
   // const {User1, User2, User3} = await createUsers(3, mutate)
 })
 
-after( () => {
+afterEach( () => {
   if(Server) Server.stop()
 })
 
 describe('🧪 - CreateUser', async _ => {
-  it('- Create require email field', async () => {
+  it('- Sign-up require email field', async () => {
     const CREATE_USER = `mutation{
         CreateUser(username:"jon",fullname:"jondoe") {
-          id
-          email
-          username
-          fullname
+          User {
+            id
+            email
+            username
+            fullname
+          }
         }
     }`
     const res = await Mutate( {mutation: CREATE_USER} )
@@ -35,40 +37,44 @@ describe('🧪 - CreateUser', async _ => {
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
   })
 
-  it('- Create require username field', async () => {
+  it('- Sign-up require password field', async () => {
     const CREATE_USER = `mutation{
-        CreateUser(email:"jon",fullname:"jondoe") {
-          id
-          email
-          username
-          fullname
+        CreateUser(email:"jon",) {
+          User {
+            id
+            email
+            username
+            fullname
+          }
         }
     }`
     const res = await Mutate( {mutation: CREATE_USER} )
     expect(res.data).to.be.undefined
-    expect(res.errors[0].message).to.contain(`argument "username" of type "String!" is required, but it was not provided`)
+    expect(res.errors[0].message).to.contain(`argument "password" of type "String!" is required, but it was not provided`)
   })
 
   let NewUser = {}
-  it('- Create user properly with fields', async () => {
-    Server.context = _ => ({headers: "meet"}) // pass some headers this way
-    
+  it('- Sign-up user properly', async () => {
     const CREATE_USER = `mutation{
-        CreateUser(email: "jondoe@mail.com",username:"jon",fullname:"jondoe") {
-          id
-          email
-          username
-          fullname
+        CreateUser(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
+          User {
+            id
+            email
+            username
+            fullname
+          }
+          token
         }
     }`
     const res = await Mutate( {mutation: CREATE_USER} )
-
-    expect(res.data.CreateUser).to.be.a('object')
-    expect(res.data.CreateUser.id).to.be.not.null
-    expect(res.data.CreateUser.email).to.equal('jondoe@mail.com')
-    expect(res.data.CreateUser.username).to.equal('jon')
-    expect(res.data.CreateUser.fullname).to.equal('jondoe')
-    NewUser = res.data.CreateUser
+    expect(res.data.CreateUser.User).to.be.a('object')
+    expect(res.data.CreateUser.User.id).to.be.not.null
+    expect(res.data.CreateUser.token).to.not.be.null
+    expect(res.data.CreateUser.User.email).to.equal('jondoe@mail.com')
+    expect(res.data.CreateUser.User.username).to.equal('jon')
+    expect(res.data.CreateUser.User.fullname).to.equal('jondoe')
+    NewUser = res.data.CreateUser.User
+    NewUser.token = res.data.CreateUser.token
   })
 
   it('- Find user', async () => {

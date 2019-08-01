@@ -15,7 +15,8 @@ const ObjectId = Schema.ObjectId;
 const User = new Schema({
     fullname: String,
     email: {type: String, required: true, unique: true},
-    username: {type: String, required: true, unique: true},
+    password: {type: String, required: true},
+    username: {type: String, unique: true},
     picture: String,
     bio: String,
     followersIds: [ObjectId],
