@@ -11,9 +11,6 @@ beforeEach( async () => {
   Mutate = mutate;
   Query = query;
   Server = server;
-  
-  // Server = withHeaders(server, {name:"foo"})
-  // const {User1, User2, User3} = await createUsers(3, mutate)
 })
 
 afterEach( () => {
@@ -21,7 +18,7 @@ afterEach( () => {
 })
 
 describe('🧪 - CreateUser', async _ => {
-  it('- Sign-up require email field', async () => {
+  it('- Should fail because sign-up require email', async () => {
     const CREATE_USER = `mutation{
         CreateUser(username:"jon",fullname:"jondoe") {
           User {
@@ -37,7 +34,7 @@ describe('🧪 - CreateUser', async _ => {
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
   })
 
-  it('- Sign-up require password field', async () => {
+  it('- Should fail because sign-up requires password', async () => {
     const CREATE_USER = `mutation{
         CreateUser(email:"jon",) {
           User {
@@ -54,7 +51,7 @@ describe('🧪 - CreateUser', async _ => {
   })
 
   let NewUser = {}
-  it('- Sign-up user properly', async () => {
+  it('- Should Sign-up user properly', async () => {
     const CREATE_USER = `mutation{
         CreateUser(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
           User {
@@ -77,7 +74,27 @@ describe('🧪 - CreateUser', async _ => {
     NewUser.token = res.data.CreateUser.token
   })
 
-  it('- Find user', async () => {
+  it('- Should fail because of duplicate users', async () => {
+    const CREATE_USER = `mutation{
+        CreateUser(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
+          User {
+            id
+            email
+            username
+            fullname
+          }
+          token
+        }
+    }`
+    const res1 = await Mutate( {mutation: CREATE_USER} )
+    const res2 = await Mutate( {mutation: CREATE_USER} )
+    
+    expect(res1.data.CreateUser).to.not.be.null
+    expect(res2.data.CreateUser).to.be.null
+    expect(res2.errors[0].message).to.contain(`E11000 duplicate key error dup key: { : "jondoe-dup@mail.com" }`)
+  })
+
+  it('- Should find user by id', async () => {
     const FETCH_USER = `query{
         User(id:"${NewUser.id}") {
           id
@@ -94,7 +111,7 @@ describe('🧪 - CreateUser', async _ => {
     expect(res.data.User.fullname).to.equal('jondoe')
   })
 
-  it('- Update (username)', async () => {
+  it('- Should Update user info', async () => {
     const UPDATE_USER = `mutation{
         UpdateUser(id:"${NewUser.id}", username:"newname") {
           username

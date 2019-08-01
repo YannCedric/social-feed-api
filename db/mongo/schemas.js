@@ -13,10 +13,10 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const User = new Schema({
-    fullname: String,
     email: {type: String, required: true, unique: true},
     password: {type: String, required: true},
-    username: {type: String, unique: true},
+    username: String,
+    fullname: String,
     picture: String,
     bio: String,
     followersIds: [ObjectId],

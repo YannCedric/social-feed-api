@@ -2,7 +2,6 @@ const {
     Users,
     Posts,
     Comments,
-    Tags,
 } = require('./schemas')
 
 module.exports.Update = async function (dbName, data){
@@ -32,6 +31,7 @@ module.exports.FindAllByIds = async function (dbName, ids){
 
 module.exports.Create = async function (dbName, data){
     const db = getDb(dbName)
+    await db.ensureIndexes()
     const newEntry = new db({...data})
     return await newEntry.save()
 }
