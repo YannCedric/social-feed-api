@@ -3,6 +3,7 @@ const {
     GraphQLID,
     GraphQLNonNull,
     GraphQLInt,
+    GraphQLString
 } = require('graphql')
 
 const {
@@ -24,6 +25,15 @@ const User = {
 const LoginWithToken = {
     type: AuthType,
     resolve: (_, __, {bearerId}) => UsersController.IssueNewUserToken(bearerId)
+}
+
+const Login = {
+    type: AuthType,
+    args: { 
+        email: {type: new GraphQLNonNull(GraphQLString)},
+        password: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: async (_, args) =>  UsersController.LoginUser(args)
 }
 
 // TODO: Implement args search
@@ -64,6 +74,7 @@ const Posts = {
 module.exports = {
     User,
     Users,
+    Login,
     LoginWithToken,
     
     Post,

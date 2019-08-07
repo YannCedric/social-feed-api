@@ -6,7 +6,8 @@ const {
     FindById,
     Update,
     FindAllByIds,
-    Create, 
+    Create,
+    FindOne,
 } = require('../db')
 
 const TOKEN_SECRET = "weak-a-secret"
@@ -18,6 +19,12 @@ const SALT_ROUNDS = 11
 class Users {
     static async CreateUser(user) {
         const User = await Create('users',user)
+        const token = this.ProvideToken({bearerId: User.id})
+        return {User,token}
+    }
+    static async LoginUser({email, password}) {
+        const User = await FindOne('users',{email, password})
+        if(!User) throw Error("Bad credentials, wrong email or password.")
         const token = this.ProvideToken({bearerId: User.id})
         return {User,token}
     }

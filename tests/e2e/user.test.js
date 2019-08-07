@@ -63,7 +63,44 @@ describe('🧪 - User stuff', async _ => {
     NewUser = res.data.CreateUser.User
     NewUser.token = res.data.CreateUser.token
   })
+
+  it('Should login after sign-up user properly', async () => {
+    const LOGIN = `query{
+        Login(email: "jondoe@mail.com",password:"test") {
+          User {
+            id
+            email
+            username
+          }
+          token
+        }
+    }`
+    const res = await Driver.send({query: LOGIN}).then( res => res.body)
+    expect(res.data.Login.User).to.be.a('object')
+    expect(res.data.Login.User.id).to.be.not.null
+    expect(res.data.Login.token).to.not.be.null
+    expect(res.data.Login.User.email).to.equal('jondoe@mail.com')
+    NewUser = res.data.Login.User
+    NewUser.token = res.data.Login.token
+  })
   
+  it('Should fail login after sign-up user properly given wrong password', async () => {
+    const LOGIN = `query{
+        Login(email: "jondoe@mail.com",password:"tests") {
+          User {
+            id
+            email
+            username
+          }
+          token
+        }
+    }`
+    const res = await Driver.send({query: LOGIN}).then( res => res.body)
+    expect(res.data.Login).to.be.null
+    expect(res.errors).to.be.an('array')
+    expect(res.errors[0].message).to.contain(`Bad credentials`)
+  })
+
   it('Should login user properly & provide new token', async () => {
     const LOGIN_NEW_TOKEN = `query {
       LoginWithToken {
@@ -149,6 +186,18 @@ describe('🧪 - User stuff', async _ => {
     expect(res).to.not.have.property('data')
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`invalid signature`)
+  })
+
+  it('Should fail update user info using WRONG personal token', async () => {
+    const UPDATE_USER = `mutation{
+        UpdateProfile(username:"newname") {
+          username
+        }
+    }`
+    const res = await Driver.send({query: UPDATE_USER}).then( res => res.body)
+    expect(res).to.have.property('data')
+              .which.has.property('UpdateProfile')
+              .which.is.null
   })
 
 })

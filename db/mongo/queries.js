@@ -36,7 +36,14 @@ module.exports.Create = async function (dbName, data){
     return await newEntry.save()
 }
 
+module.exports.FindOne = async function (dbName, query){
+    const db = getDb(dbName)
+    await db.ensureIndexes()
+    return findOne(db)(query)
+}
+
 const findOneAndUpdate = db => entry => db.findOneAndUpdate({_id: entry.id}, entry, {new: true})
+const findOne = db => entry => db.findOne(entry)
 const find = db => query => db.find(query)
 const findWithPaging = db => (from, limit) => db.find({_id: {$gt: from}}).limit(limit)
 const findById = db => id => db.findById(id)

@@ -8,6 +8,7 @@ const {
     Users,
     Post,
     Posts,
+    Login,
     LoginWithToken,
 } = require('./queries')
 
@@ -32,6 +33,7 @@ const schema = new GraphQLSchema({
             Users,
             Post,
             Posts,
+            Login,
             LoginWithToken,
         }
     }),
