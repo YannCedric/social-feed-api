@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests --exit --local --log_level=off",
-    "tdd": "mocha tests --watch --reporter nyan --local --log_level=off",
+    "test": "mocha tests/e2e --exit --local --log_level=off",
+    "tdd": "mocha tests/e2e --watch --reporter nyan --local --log_level=off",
     "start": "node index",
     "dev": "nodemon index -- --local"
   },
@@ -15,6 +15,7 @@
     "apollo-server": "^2.7.2",
     "graphql": "^14.4.2",
     "graphql-subscriptions": "^1.1.0",
+    "graphql-tag": "^2.10.1",
     "jsonwebtoken": "^8.5.1",
     "log4js": "^4.5.1",
     "mongoose": "^5.4.3",

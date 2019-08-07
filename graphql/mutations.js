@@ -26,8 +26,7 @@ const CreateUser = {
         bio: {type: GraphQLString}, 
     },
     resolve: async (_, args, context) => {
-        const User = await UsersController.CreateUser(args)
-        const token = UsersController.ProvideToken(User.id)  
+        const {User,token} = await UsersController.CreateUser(args)
         if (context.pubsub) context.pubsub.publish('user', {UsersSub: User})
         return {User, token}
     }

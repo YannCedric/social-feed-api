@@ -1,52 +1,45 @@
 const chai = require('chai')
-  , {expect} = chai
   , chaiHttp = require('chai-http')
-  , API_ENDPOINT = 'http://localhost:8000'
-  , StartServer = require('../Server')
-  
+  , StartServer = require('../../Server')
+  , {expect} = chai
+
 chai.use(chaiHttp)
 
-const Driver = chai.request(API_ENDPOINT).post('/').set("content-type", "application/json")
+before( async () => { server = await StartServer() })
 
-before( async () => {
-  await StartServer()
-})
+beforeEach( () => { Driver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") })
 
-describe('🧪 - CreateUser', async _ => {
-  it('- Should fail because sign-up requires email', async () => {
-    const CREATE_USER = `mutation {
-        CreateUser(username:"jon",fullname:"jondoe") {
+after( () => { server.stop() })
+
+describe('🧪 - User stuff', async _ => {
+  it('Should fail because sign-up requires email', async () => {
+    const CREATE_USER1 = `mutation {
+        CreateUser(password:"wtvs") {
           User {
-            id
             email
-            username
-            fullname
           }
         }
       }`
-    const res = await Driver.send({query: CREATE_USER}).then( res => res.body)
+    const res = await Driver.send({query: CREATE_USER1}).then( res => res.body)
     expect(res.data).to.be.undefined
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
   })
 
-  it('- Should fail because sign-up requires password', async () => {
-    const CREATE_USER = `mutation{
+  it('Should fail because sign-up requires password', async () => {
+    const CREATE_USER2 = `mutation{
         CreateUser(email:"jon") {
           User {
-            id
             email
-            username
-            fullname
           }
         }
     }`
-    const res = await Driver.send({query: CREATE_USER}).then( res => res.body)
+    const res = await Driver.send({query: CREATE_USER2}).then( res => res.body)
     expect(res.data).to.be.undefined
     expect(res.errors[0].message).to.contain(`argument "password" of type "String!" is required, but it was not provided`)
   })
 
   let NewUser = {}
-  it('- Should sign-up user properly', async () => {
+  it('Should sign-up user properly & provide token', async () => {
     const CREATE_USER = `mutation{
         CreateUser(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
           User {
@@ -68,8 +61,32 @@ describe('🧪 - CreateUser', async _ => {
     NewUser = res.data.CreateUser.User
     NewUser.token = res.data.CreateUser.token
   })
+  
+  it('Should login user properly & provide new token', async () => {
+    const LOGIN_NEW_TOKEN = `query {
+      LoginWithToken {
+          User {
+            id
+            email
+            username
+            fullname
+          }
+          token
+        }
+    }`
+    const res = await Driver.send({query: LOGIN_NEW_TOKEN}).set("token",NewUser.token).then( res => res.body)
+    expect(res.data.LoginWithToken.User).to.be.a('object')
+    expect(res.data.LoginWithToken.User.id).to.be.not.null
+    expect(res.data.LoginWithToken.token).to.not.be.null
+    expect(res.data.LoginWithToken.token).to.not.be.equal(NewUser.token)
+    expect(res.data.LoginWithToken.User.email).to.equal('jondoe@mail.com')
+    expect(res.data.LoginWithToken.User.username).to.equal('jon')
+    expect(res.data.LoginWithToken.User.fullname).to.equal('jondoe')
+    NewUser = res.data.LoginWithToken.User
+    NewUser.token = res.data.LoginWithToken.token
+  })
 
-  it('- Should fail because of duplicate users', async () => {
+  it('Should fail because of duplicate users', async () => {
     const CREATE_USER = `mutation{
         User1: CreateUser(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
           User {
@@ -91,7 +108,7 @@ describe('🧪 - CreateUser', async _ => {
     expect(res.errors[0].message).to.contain(`duplicate key error dup key`)
   })
 
-  it('- Should find user by id', async () => {
+  it('Should find user by id', async () => {
     const FETCH_USER = `query{
         User(id:"${NewUser.id}") {
           id
@@ -100,7 +117,7 @@ describe('🧪 - CreateUser', async _ => {
           fullname
         }
     }`
-    const res = await Driver.send({query: CREATE_USER}).then( res => res.body)
+    const res = await Driver.send({query: FETCH_USER}).then( res => res.body)
     expect(res.data.User).to.be.a('object')
     expect(res.data.User.id).to.be.not.null
     expect(res.data.User.email).to.equal('jondoe@mail.com')
@@ -108,13 +125,13 @@ describe('🧪 - CreateUser', async _ => {
     expect(res.data.User.fullname).to.equal('jondoe')
   })
 
-  it('- Should Update user info', async () => {
+  it('Should Update user info', async () => {
     const UPDATE_USER = `mutation{
         UpdateUser(id:"${NewUser.id}", username:"newname") {
           username
         }
     }`
-    const res = await Query( {query: UPDATE_USER} )
+    const res = await Driver.send({query: UPDATE_USER}).then( res => res.body)
     expect(res.data.UpdateUser).to.be.a('object')
     expect(res.data.UpdateUser.username).to.equal('newname')
   })

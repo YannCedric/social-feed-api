@@ -14,16 +14,18 @@ module.exports = async function StartServer(){
 
   const server = new ApolloServer({
     schema,
-    context: ({req}) => ({
-        headers: req ? req.headers : null, // for subscriptions errors
-        pubsub,
-        bearerId: UsersController.Authenticate(req),
-      })
+    context: async ({req}) => ({
+      headers: req ? req.headers : null, // for subscriptions errors
+      pubsub,
+      bearerId: await UsersController.Authenticate(req),
+    })
   });
   
   server.listen(port).then(({ url }) => {
     logger.info(`🚀 - Server ready at ${url}`);
   });
+
+  return server;
 }
 
 async function Setup(){
@@ -31,13 +33,7 @@ async function Setup(){
   logger.info("Log level set to: "+log_level)
   
   if(local) {
-    const mongod = new MongoMemoryServer({
-      instance: {
-        debug: true,
-        port: 8080,
-        dbName: 'admin',
-      }
-    }) // create local db
+    const mongod = new MongoMemoryServer() // create local db
     process.env.MONGO_URI = await mongod.getConnectionString() // overide global db uri
     logger.info("Using in memory (ephemeral) database")
   }

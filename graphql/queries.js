@@ -8,6 +8,7 @@ const {
 const {
     UserType,
     PostType,
+    AuthType,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
@@ -21,9 +22,8 @@ const User = {
 }
 
 const LoginWithToken = {
-    type: UserType,
-    args: { id: {type: new GraphQLNonNull(GraphQLID)} },
-    resolve: (_, {id}) => UsersController.FindUserById(id)
+    type: AuthType,
+    resolve: (_, __, {bearerId}) => UsersController.IssueNewUserToken(bearerId)
 }
 
 // TODO: Implement args search
@@ -64,6 +64,7 @@ const Posts = {
 module.exports = {
     User,
     Users,
+    LoginWithToken,
     
     Post,
     Posts,
