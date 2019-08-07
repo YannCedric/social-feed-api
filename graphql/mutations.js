@@ -32,17 +32,16 @@ const CreateUser = {
     }
 }
 
-const UpdateUser = {
+const UpdateProfile = {
     type: UserType,
     args: { 
-        id: {type: new GraphQLNonNull(GraphQLID)},
         fullname: {type: GraphQLString},
         email: {type: GraphQLString},
         username: {type: GraphQLString},
         picture: {type: GraphQLString},
         bio: {type: GraphQLString}, 
     },
-    resolve: (_, args) => UsersController.UpdateUser(args)
+    resolve: (_, args, {bearerId}) => UsersController.UpdateUser({...args, id: bearerId})
 }
 
 const CreatePost = { // Protected Route
@@ -90,7 +89,7 @@ const EditComment = { // Protected Route
 
 module.exports = {
     CreateUser,
-    UpdateUser,
+    UpdateProfile,
     CreatePost,
     UpdatePost,
     MakeComment,

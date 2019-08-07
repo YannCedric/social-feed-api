@@ -13,7 +13,7 @@ const {
 
 const {
     CreateUser,
-    UpdateUser,
+    UpdateProfile,
     CreatePost,
     UpdatePost,
     MakeComment,
@@ -39,7 +39,7 @@ const schema = new GraphQLSchema({
         name: 'RootMutation',
         fields: {
             CreateUser,
-            UpdateUser,
+            UpdateProfile,
             CreatePost,
             UpdatePost,
             MakeComment,

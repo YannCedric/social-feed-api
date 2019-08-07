@@ -22,6 +22,7 @@ describe('🧪 - User stuff', async _ => {
       }`
     const res = await Driver.send({query: CREATE_USER1}).then( res => res.body)
     expect(res.data).to.be.undefined
+    expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
   })
 
@@ -35,6 +36,7 @@ describe('🧪 - User stuff', async _ => {
     }`
     const res = await Driver.send({query: CREATE_USER2}).then( res => res.body)
     expect(res.data).to.be.undefined
+    expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`argument "password" of type "String!" is required, but it was not provided`)
   })
 
@@ -105,6 +107,7 @@ describe('🧪 - User stuff', async _ => {
     expect(res.data.User1.User).to.not.be.null
     expect(res.data.User1.User.username).to.be.equal("jon-dup")
     expect(res.data.User2).to.be.null
+    expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`duplicate key error dup key`)
   })
 
@@ -125,15 +128,27 @@ describe('🧪 - User stuff', async _ => {
     expect(res.data.User.fullname).to.equal('jondoe')
   })
 
-  it('Should Update user info', async () => {
+  it('Should update user info using personal token', async () => {
     const UPDATE_USER = `mutation{
-        UpdateUser(id:"${NewUser.id}", username:"newname") {
+        UpdateProfile(username:"newname") {
           username
         }
     }`
-    const res = await Driver.send({query: UPDATE_USER}).then( res => res.body)
-    expect(res.data.UpdateUser).to.be.a('object')
-    expect(res.data.UpdateUser.username).to.equal('newname')
+    const res = await Driver.send({query: UPDATE_USER}).set("token",NewUser.token).then( res => res.body)
+    expect(res.data.UpdateProfile).to.be.a('object').which.has.property('username')
+    expect(res.data.UpdateProfile.username).to.equal('newname')
+  })
+
+  it('Should fail update user info using WRONG personal token', async () => {
+    const UPDATE_USER = `mutation{
+        UpdateProfile(username:"newname") {
+          username
+        }
+    }`
+    const res = await Driver.send({query: UPDATE_USER}).set("token",`${NewUser.token}-XXXXX`).then( res => res.body)
+    expect(res).to.not.have.property('data')
+    expect(res.errors).to.be.an('array')
+    expect(res.errors[0].message).to.contain(`invalid signature`)
   })
 
 })

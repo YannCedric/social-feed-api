@@ -7,6 +7,7 @@
     "test": "mocha tests/e2e --exit --local --log_level=off",
     "tdd": "mocha tests/e2e --watch --reporter nyan --local --log_level=off",
     "start": "node index",
+    "coverage": "nyc npm run test",
     "dev": "nodemon index -- --local"
   },
   "author": "",
@@ -27,6 +28,7 @@
     "chai-http": "^4.3.0",
     "mocha": "^6.2.0",
     "mongodb-memory-server": "^5.1.9",
-    "nodemon": "^1.19.1"
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1"
   }
 }
