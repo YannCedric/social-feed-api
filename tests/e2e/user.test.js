@@ -11,7 +11,7 @@ beforeEach( () => { Driver = chai.request("http://localhost:8000").post('/').se
 
 after( () => { server.stop() })
 
-describe('🧪 - User stuff', async _ => {
+describe('🧪 - User Scenarios', async _ => {
   it('Should fail because sign-up requires email', async () => {
     const CREATE_USER1 = `mutation {
         CreateUser(password:"wtvs") {
