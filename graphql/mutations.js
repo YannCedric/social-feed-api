@@ -51,9 +51,7 @@ const CreatePost = { // Protected Route
         picture: {type: GraphQLString},
         tags: {type: new GraphQLList(GraphQLString)},
     },
-    resolve: (_, args, context) => {
-        return PostsController.CreatePost({...args, authorId: context.headers.bearerid})
-    }
+    resolve: (_, args, {bearerId:authorId}) => PostsController.CreatePost({...args, authorId})
 }
 
 const UpdatePost = { // Protected Route
@@ -64,7 +62,23 @@ const UpdatePost = { // Protected Route
         picture: {type: GraphQLString},
         tags: {type: new GraphQLList(GraphQLString)},
     },
-    resolve: (_, args) => PostsController.UpdatePost(args)
+    resolve: (_, args, {bearerId:authorId}) => PostsController.UpdatePost({...args, authorId})
+}
+
+const LikePost = { // Protected Route
+    type: PostType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.LikePost({postId, likerId})
+}
+
+const DislikePost = { // Protected Route
+    type: PostType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.DislikePost({postId, likerId})
 }
 
 const MakeComment = { // Protected Route
@@ -74,7 +88,7 @@ const MakeComment = { // Protected Route
         text: {type: new GraphQLNonNull(GraphQLString)},
         picture: {type: GraphQLString},
     },
-    resolve: (_, args, context) => PostsController.MakeComment({...args, authorId: context.headers.bearerid})
+    resolve: (_, args, context) => PostsController.MakeComment({...args, authorId: context.headers.bearerId})
 }
 
 const EditComment = { // Protected Route
@@ -94,4 +108,6 @@ module.exports = {
     UpdatePost,
     MakeComment,
     EditComment,
+    LikePost,
+    DislikePost,
 }

@@ -29,14 +29,14 @@ const Comment = new Schema({
     postId: {type: ObjectId, required: true},
     likersIds: [ObjectId],
     dislikersIds: [ObjectId],
-    authorId: {type: ObjectId, required: true},
+    authorId: {type: ObjectId, required: () => this.authorId !== null},
 })
 
 const Post = new Schema({
     text: {type: String, required: true},
     picture: String,
     tags: [String],
-    authorId: {type: ObjectId, required: true},
+    authorId: {type: ObjectId, required: () => this.authorId !== null },
     commentsIds: [ObjectId],
     likersIds: [ObjectId],
     dislikersIds: [ObjectId],

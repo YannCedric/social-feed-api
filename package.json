@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "apollo-server": "^2.7.2",
+    "chai-things": "^0.2.0",
     "graphql": "^14.4.2",
     "graphql-subscriptions": "^1.1.0",
     "graphql-tag": "^2.10.1",

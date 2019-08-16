@@ -34,6 +34,16 @@ class Posts {
     static async FindAllPostsByIds(ids){
         return FindAllByIds('posts',ids)
     }
+    static async LikePost({postId, likerId}){
+        return Update('posts',{ id: postId, 
+                                $pull: {dislikersIds: likerId}, 
+                                $addToSet: {likersIds: likerId} })
+    }
+    static async DislikePost({postId, likerId}){
+        return Update('posts',{ id: postId, 
+                                $pull: {likersIds: likerId}, 
+                                $addToSet: {dislikersIds: likerId} })
+    }
     static async GetAllCommentsByIds(ids){
         return FindAllByIds('comments',ids)
     }
