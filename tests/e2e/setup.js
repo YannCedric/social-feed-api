@@ -1,0 +1,18 @@
+before( async () => {
+   chai = require('chai')
+  , chaiHttp = require('chai-http')
+  , StartServer = require('../../Server')
+
+    chai.use(chaiHttp)
+
+    server = await StartServer()
+    expect = chai.expect
+})
+
+beforeEach( () => { 
+    driver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") 
+})
+
+after( () => { 
+    server.stop() 
+})

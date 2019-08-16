@@ -1,16 +1,3 @@
-const chai = require('chai')
-  , chaiHttp = require('chai-http')
-  , StartServer = require('../../Server')
-  , {expect} = chai
-
-chai.use(chaiHttp)
-
-before( async () => { server = await StartServer() })
-
-beforeEach( () => { Driver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") })
-
-after( () => { server.stop() })
-
 describe('🧪 - User Scenarios', async _ => {
   it('Should fail because sign-up requires email', async () => {
     const CREATE_USER1 = `mutation {
@@ -20,7 +7,7 @@ describe('🧪 - User Scenarios', async _ => {
           }
         }
       }`
-    const res = await Driver.send({query: CREATE_USER1}).then( res => res.body)
+    const res = await driver.send({query: CREATE_USER1}).then( res => res.body)
     expect(res.data).to.be.undefined
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`argument "email" of type "String!" is required, but it was not provided`)
@@ -34,7 +21,7 @@ describe('🧪 - User Scenarios', async _ => {
           }
         }
     }`
-    const res = await Driver.send({query: CREATE_USER2}).then( res => res.body)
+    const res = await driver.send({query: CREATE_USER2}).then( res => res.body)
     expect(res.data).to.be.undefined
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`argument "password" of type "String!" is required, but it was not provided`)
@@ -53,7 +40,7 @@ describe('🧪 - User Scenarios', async _ => {
           token
         }
     }`
-    const res = await Driver.send({query: CREATE_USER}).then( res => res.body)
+    const res = await driver.send({query: CREATE_USER}).then( res => res.body)
     expect(res.data.CreateUser.User).to.be.a('object')
     expect(res.data.CreateUser.User.id).to.be.not.null
     expect(res.data.CreateUser.token).to.not.be.null
@@ -75,7 +62,7 @@ describe('🧪 - User Scenarios', async _ => {
           token
         }
     }`
-    const res = await Driver.send({query: LOGIN}).then( res => res.body)
+    const res = await driver.send({query: LOGIN}).then( res => res.body)
     expect(res.data.Login.User).to.be.a('object')
     expect(res.data.Login.User.id).to.be.not.null
     expect(res.data.Login.token).to.not.be.null
@@ -95,7 +82,7 @@ describe('🧪 - User Scenarios', async _ => {
           token
         }
     }`
-    const res = await Driver.send({query: LOGIN}).then( res => res.body)
+    const res = await driver.send({query: LOGIN}).then( res => res.body)
     expect(res.data.Login).to.be.null
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`Bad credentials`)
@@ -113,7 +100,7 @@ describe('🧪 - User Scenarios', async _ => {
           token
         }
     }`
-    const res = await Driver.send({query: LOGIN_NEW_TOKEN}).set("token",NewUser.token).then( res => res.body)
+    const res = await driver.send({query: LOGIN_NEW_TOKEN}).set("token",NewUser.token).then( res => res.body)
     expect(res.data.LoginWithToken.User).to.be.a('object')
     expect(res.data.LoginWithToken.User.id).to.be.not.null
     expect(res.data.LoginWithToken.token).to.not.be.null
@@ -139,7 +126,7 @@ describe('🧪 - User Scenarios', async _ => {
           }
         }
     }`
-    const res = await Driver.send({query: CREATE_USER}).then( res => res.body)
+    const res = await driver.send({query: CREATE_USER}).then( res => res.body)
     
     expect(res.data.User1.User).to.not.be.null
     expect(res.data.User1.User.username).to.be.equal("jon-dup")
@@ -157,7 +144,7 @@ describe('🧪 - User Scenarios', async _ => {
           fullname
         }
     }`
-    const res = await Driver.send({query: FETCH_USER}).then( res => res.body)
+    const res = await driver.send({query: FETCH_USER}).then( res => res.body)
     expect(res.data.User).to.be.a('object')
     expect(res.data.User.id).to.be.not.null
     expect(res.data.User.email).to.equal('jondoe@mail.com')
@@ -171,7 +158,7 @@ describe('🧪 - User Scenarios', async _ => {
           username
         }
     }`
-    const res = await Driver.send({query: UPDATE_USER}).set("token",NewUser.token).then( res => res.body)
+    const res = await driver.send({query: UPDATE_USER}).set("token",NewUser.token).then( res => res.body)
     expect(res.data.UpdateProfile).to.be.a('object').which.has.property('username')
     expect(res.data.UpdateProfile.username).to.equal('newname')
   })
@@ -182,7 +169,7 @@ describe('🧪 - User Scenarios', async _ => {
           username
         }
     }`
-    const res = await Driver.send({query: UPDATE_USER}).set("token",`${NewUser.token}-XXXXX`).then( res => res.body)
+    const res = await driver.send({query: UPDATE_USER}).set("token",`${NewUser.token}-XXXXX`).then( res => res.body)
     expect(res).to.not.have.property('data')
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`invalid signature`)
@@ -194,7 +181,7 @@ describe('🧪 - User Scenarios', async _ => {
           username
         }
     }`
-    const res = await Driver.send({query: UPDATE_USER}).then( res => res.body)
+    const res = await driver.send({query: UPDATE_USER}).then( res => res.body)
     expect(res).to.have.property('data')
               .which.has.property('UpdateProfile')
               .which.is.null
