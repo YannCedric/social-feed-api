@@ -88,7 +88,7 @@ const MakeComment = { // Protected Route
         text: {type: new GraphQLNonNull(GraphQLString)},
         picture: {type: GraphQLString},
     },
-    resolve: (_, args, context) => PostsController.MakeComment({...args, authorId: context.headers.bearerId})
+    resolve: (_, args, {bearerId:authorId}) => PostsController.MakeComment({...args, authorId})
 }
 
 const EditComment = { // Protected Route

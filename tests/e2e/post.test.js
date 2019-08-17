@@ -3,7 +3,7 @@ describe('🧪 - Post Scenarios', async _ => {
         let localDriver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") 
         
         const CREATE_USER = `mutation{
-            CreateUser(email: "jondoee@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
+            CreateUser(email: "jondo0@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
               User {
                 id
                 email
@@ -91,7 +91,7 @@ describe('🧪 - Post Scenarios', async _ => {
         expect(res.data.UpdatePost).to.have.property("text").which.equals("Some other text")
     })
 
-    it('Should fail updating a post, due to missing credentials', async () => {
+    it('Should fail updating a post, due to expired token', async () => {
         const CREATE_POST = `mutation {
             CreatePost(text:"Some text", tags: ["tag1", "tag2"]){
                 id
@@ -106,7 +106,7 @@ describe('🧪 - Post Scenarios', async _ => {
                                 .set("token", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7ImJlYXJlcklkIjoiNWQ1NjFhM2NiMGQ1OGVhM2MwMjRhNzVlIn0sInRpbWVzdGFtcCI6MTU2NTkyMzkwMDc3MiwiaWF0IjoxNTY1OTIzOTAwLCJleHAiOjE1NjYwMTAzMDB9.oEMwjZkAeljQ18FMiFQLxdOhJGOIHHp2-vVCzPeNss0")
                                 .then( res => res.body)
         expect(res).to.have.property('errors').which.is.not.null
-        expect(res.errors[0].message).to.contain(`User doesn't exist`)
+        expect(res.errors[0].message).to.contain(`jwt expired`)
     })
 
     it('Should successfully like a post', async () => {
