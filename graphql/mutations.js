@@ -101,6 +101,14 @@ const EditComment = { // Protected Route
     resolve: (_, args, context) => PostsController.UpdateComment(args)
 }
 
+const LikeComment = { // Protected Route
+    type: CommentType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.LikePost({postId, likerId})
+}
+
 module.exports = {
     CreateUser,
     UpdateProfile,
