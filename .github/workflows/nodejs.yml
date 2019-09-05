@@ -9,7 +9,9 @@ jobs:
     steps:
     - uses: actions/checkout@master
     - uses: actions/setup-node@v1
+      with:
+        node-version: '10'
     - name: npm install, build, and test
       run: |
-        npm install
+        npm i -f
         npm test
