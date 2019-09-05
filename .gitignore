@@ -1,4 +1,4 @@
 deploy_db.sh
-/node_modules
+node_modules
 *lock*
 /data

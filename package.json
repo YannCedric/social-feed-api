@@ -4,23 +4,32 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha tests --exit",
-    "testing": "mocha tests --watch",
+    "test": "mocha tests/e2e --exit --local --log_level=off",
+    "tdd": "mocha tests/e2e --watch --reporter nyan --local --log_level=off",
     "start": "node index",
-    "db": "./deploy_test_db.sh"
+    "coverage": "nyc npm run test",
+    "dev": "nodemon index -- --local"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.18.3",
-    "express": "^4.16.4",
-    "fancy-log": "^1.3.3",
+    "apollo-server": "^2.7.2",
+    "chai-things": "^0.2.0",
+    "graphql": "^14.4.2",
+    "graphql-subscriptions": "^1.1.0",
+    "graphql-tag": "^2.10.1",
+    "jsonwebtoken": "^8.5.1",
+    "log4js": "^4.5.1",
     "mongoose": "^5.4.3",
     "yargs": "^12.0.5"
   },
   "devDependencies": {
+    "apollo-server-testing": "^2.7.2",
     "chai": "^4.2.0",
-    "chai-http": "^4.2.1",
-    "mocha": "^5.2.0"
+    "chai-http": "^4.3.0",
+    "mocha": "^6.2.0",
+    "mongodb-memory-server": "^5.1.9",
+    "nodemon": "^1.19.1",
+    "nyc": "^14.1.1"
   }
 }

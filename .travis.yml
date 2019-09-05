@@ -1,14 +1,9 @@
 language: node_js
 services: 
-- docker
 - nodejs
 
 node_js:
   - "10"
 
 script: 
-- node -v
-- npm run db
-- sleep 10
-- echo 'db.stats().ok' | mongo localhost:8080/test --quiet
 - npm run test
