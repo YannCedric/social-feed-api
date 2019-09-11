@@ -98,7 +98,7 @@ const EditComment = { // Protected Route
         text: {type: GraphQLString},
         picture: {type: GraphQLString},
     },
-    resolve: (_, args, context) => PostsController.UpdateComment(args)
+    resolve: (_, {id, text, picture}, {bearerId:editorId}) => PostsController.UpdateComment({id, text, picture,editorId})
 }
 
 const LikeComment = { // Protected Route
@@ -114,7 +114,15 @@ const DisLikeComment = { // Protected Route
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: commentId}, {bearerId:likerId}) => PostsController.DisLikeComment({commentId, likerId})
+    resolve: (_, {id: commentId}, {bearerId:dislikerId}) => PostsController.DisLikeComment({commentId, dislikerId})
+}
+
+const DeleteComment = { // Protected Route
+    type: CommentType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: commentId}, {bearerId:deleterId}) => PostsController.DeleteComment({commentId, deleterId})
 }
 
 module.exports = {
@@ -128,4 +136,5 @@ module.exports = {
     DislikePost,
     LikeComment,
     DisLikeComment,
+    DeleteComment,
 }

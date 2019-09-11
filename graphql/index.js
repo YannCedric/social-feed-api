@@ -23,6 +23,7 @@ const {
     DislikePost,
     LikeComment,
     DisLikeComment,
+    DeleteComment,
 } = require('./mutations')
 
 const {
@@ -54,6 +55,7 @@ const schema = new GraphQLSchema({
             DislikePost,
             LikeComment,
             DisLikeComment,
+            DeleteComment,
         },
     }),
     subscription: new GraphQLObjectType({

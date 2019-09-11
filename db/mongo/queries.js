@@ -42,12 +42,19 @@ module.exports.FindOne = async function (dbName, query){
     return findOne(db)(query)
 }
 
+module.exports.DeleteOne = async function (dbName, id){
+    const db = getDb(dbName)
+    await db.ensureIndexes()
+    return deleteOne(db)(id)
+}
+
 const findOneAndUpdate = db => entry => db.findOneAndUpdate({_id: entry.id}, entry, {new: true})
 const findOne = db => entry => db.findOne(entry)
 const find = db => query => db.find(query)
 const findWithPaging = db => (from, limit) => db.find({_id: {$gt: from}}).limit(limit)
 const findById = db => id => db.findById(id)
 const findAllByIds = db => ids => db.find({_id: { $in: ids} })
+const deleteOne = db => id => db.deleteOne({_id: id })
 
 const getDb = dbName => {
     switch(dbName) {
@@ -58,6 +65,6 @@ const getDb = dbName => {
         case 'comments':
             return Comments
         default: 
-            throw Error(`Database "${dbName}" is not handled`)
+            throw Error(`Database "${dbName}" is not known !`)
     }
 }

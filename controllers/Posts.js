@@ -4,7 +4,8 @@ const {
     FindById,
     Update,
     FindAllByIds,
-    Create, 
+    Create,
+    DeleteOne,
 } = require('../db')
 
 class Posts {
@@ -14,8 +15,14 @@ class Posts {
     static async UpdatePost(data) {
         return Update('posts', data)
     }
-    static async UpdateComment(data) {
-        return Update('comments', data)
+    static async UpdateComment({id, text, picture, editorId}) {
+        const comment = await FindById('comments',id)
+        if(!comment) {
+            throw Error("Comment doesn't exist !.")
+        } else if(!comment.authorId.equals(editorId)){
+            throw Error("User doesn't have the right to edit this comment.")
+        } else 
+            return Update('comments', {id, text, picture})
     }
     static async MakeComment(data) {
         const newComment = await Create('comments', data)
@@ -44,10 +51,19 @@ class Posts {
                                 $pull: {dislikersIds: likerId}, 
                                 $addToSet: {likersIds: likerId} })
     }
-    static async DisLikeComment({commentId, likerId}){
+    static async DisLikeComment({commentId, dislikerId}){
         return Update('comments',{ id: commentId, 
-                                $pull: {likersIds: likerId}, 
-                                $addToSet: {dislikersIds: likerId} })
+                                $pull: {likersIds: dislikerId}, 
+                                $addToSet: {dislikersIds: dislikerId} })
+    }
+    static async DeleteComment({commentId, deleterId}){
+        const comment = await FindById('comments',commentId)
+        if(!comment) {
+            throw Error("Comment doesn't exist !.")
+        } else if(!comment.authorId.equals(deleterId)){
+            throw Error("User doesn't have the right to delete this comment.")
+        } else 
+            return DeleteOne('comments',commentId)
     }
     static async DislikePost({postId, likerId}){
         return Update('posts',{ id: postId, 

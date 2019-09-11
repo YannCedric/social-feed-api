@@ -163,7 +163,7 @@ describe('🧪 - User Scenarios', async _ => {
     expect(res.data.UpdateProfile.username).to.equal('newname')
   })
 
-  it('Should fail update user info using WRONG personal token', async () => {
+  it('Should fail update user info using invalid personal token', async () => {
     const UPDATE_USER = `mutation{
         UpdateProfile(username:"newname") {
           username
@@ -175,7 +175,7 @@ describe('🧪 - User Scenarios', async _ => {
     expect(res.errors[0].message).to.contain(`invalid signature`)
   })
 
-  it('Should fail update user info using WRONG personal token', async () => {
+  it('Should fail update user info using no personal token', async () => {
     const UPDATE_USER = `mutation{
         UpdateProfile(username:"newname") {
           username

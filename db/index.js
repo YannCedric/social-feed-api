@@ -6,6 +6,7 @@ const {
     FindAllByIds,
     Update,
     FindOne,
+    DeleteOne,
 } = require('./mongo/queries')
 
 module.exports = {
@@ -16,4 +17,5 @@ module.exports = {
     FindAllByIds,
     Update,
     FindOne,
+    DeleteOne,
 }
