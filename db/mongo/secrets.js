@@ -8,10 +8,5 @@ const {
 } = process.env
 
 module.exports = {
-    MONGO_ADDRESS,
-    USERNAME,
-    DB_PASS,
-    DB_PORT,
-    AUTH_DB,
     MONGO_URI,
 }

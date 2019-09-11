@@ -79,24 +79,43 @@ describe('🧪 - Comments Scenarios', async _ => {
                                 .which.equals("Some other comment")
     })
 
-    // it('Should successfully like a comment', async () => {
-    //     const LIKE_COMMENT = `mutation {
-    //         LikeComment(id: "${Comment.id}"){
-    //             id
-    //             text
-    //             likers {
-    //                 id
-    //             }
-    //         }
-    //     }`
-    //     const res = await driver.send({query: LIKE_COMMENT}).set("token", User.token).then( res => res.body)
-    //     expect(res).to.have.property("data")
-    //                .which.has.property("LikeComment").which.is.not.null
-    //     expect(res.data.LikeComment).to.have.property("likers")
-    //                             .which.includes.something
-    //                             .which.has.property("id")
-    //                             .which.equals(User.id)
-    //     expect(res.data.LikeComment).to.have.property("text")
-    //                             .which.equals("Some other comment")
-    // })
+    it('Should successfully like a comment', async () => {
+        const LIKE_COMMENT = `mutation {
+            LikeComment(id: "${Comment.id}"){
+                id
+                text
+                likers {
+                    id
+                }
+            }
+        }`
+        const res = await driver.send({query: LIKE_COMMENT}).set("token", User.token).then( res => res.body)
+        expect(res).to.have.property("data")
+                   .which.has.property("LikeComment").which.is.not.null
+        expect(res.data.LikeComment).to.have.property("likers")
+                                .which.includes.something
+                                .that.deep.equals({id: User.id})
+        expect(res.data.LikeComment).to.have.property("text")
+                                .which.equals("Some other comment")
+    })
+
+    it('Should successfully dislike a comment', async () => {
+        const LIKE_COMMENT = `mutation {
+            DisLikeComment(id: "${Comment.id}"){
+                id
+                text
+                dislikers {
+                    id
+                }
+            }
+        }`
+        const res = await driver.send({query: LIKE_COMMENT}).set("token", User.token).then( res => res.body)
+        expect(res).to.have.property("data")
+                   .which.has.property("DisLikeComment").which.is.not.null
+        expect(res.data.DisLikeComment).to.have.property("dislikers")
+                                .which.includes.something
+                                .that.deep.equals({id: User.id})
+        expect(res.data.DisLikeComment).to.have.property("text")
+                                .which.equals("Some other comment")
+    })
 })

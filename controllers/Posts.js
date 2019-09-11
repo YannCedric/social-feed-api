@@ -39,6 +39,16 @@ class Posts {
                                 $pull: {dislikersIds: likerId}, 
                                 $addToSet: {likersIds: likerId} })
     }
+    static async LikeComment({commentId, likerId}){
+        return Update('comments',{ id: commentId, 
+                                $pull: {dislikersIds: likerId}, 
+                                $addToSet: {likersIds: likerId} })
+    }
+    static async DisLikeComment({commentId, likerId}){
+        return Update('comments',{ id: commentId, 
+                                $pull: {likersIds: likerId}, 
+                                $addToSet: {dislikersIds: likerId} })
+    }
     static async DislikePost({postId, likerId}){
         return Update('posts',{ id: postId, 
                                 $pull: {likersIds: likerId}, 

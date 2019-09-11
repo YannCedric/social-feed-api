@@ -106,7 +106,15 @@ const LikeComment = { // Protected Route
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.LikePost({postId, likerId})
+    resolve: (_, {id: commentId}, {bearerId:likerId}) => PostsController.LikeComment({commentId, likerId})
+}
+
+const DisLikeComment = { // Protected Route
+    type: CommentType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: commentId}, {bearerId:likerId}) => PostsController.DisLikeComment({commentId, likerId})
 }
 
 module.exports = {
@@ -118,4 +126,6 @@ module.exports = {
     EditComment,
     LikePost,
     DislikePost,
+    LikeComment,
+    DisLikeComment,
 }
