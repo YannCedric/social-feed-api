@@ -10,11 +10,12 @@ const {
     UserType,
     PostType,
     AuthType,
+    ChatRoom,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
-
+const ChatController = require('../controllers/Chat')
 
 const User = {
     type: UserType,
@@ -71,6 +72,21 @@ const Posts = {
     }
 }
 
+const Chats = {
+    type: new GraphQLList(ChatRoom),
+    args: { 
+        from: {type: GraphQLID}, 
+        limit: {type: GraphQLInt},
+    },
+    resolve: (_, {from, limit=10},{bearerId}) => {
+        if (from)
+            return ChatController.FindChatsWithPaging(bearerId, from, limit)
+        else
+            return ChatController.FindChats(bearerId)
+    }
+}
+
+
 module.exports = {
     User,
     Users,
@@ -79,4 +95,5 @@ module.exports = {
     
     Post,
     Posts,
+    Chats,
 }

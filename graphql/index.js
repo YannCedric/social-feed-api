@@ -10,6 +10,7 @@ const {
     Posts,
     Login,
     LoginWithToken,
+    Chats,
 } = require('./queries')
 
 const {
@@ -42,6 +43,7 @@ const schema = new GraphQLSchema({
             Posts,
             Login,
             LoginWithToken,
+            Chats,
         }
     }),
     mutation: new GraphQLObjectType({

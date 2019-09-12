@@ -16,7 +16,7 @@ module.exports.Find = async function (dbName, query){
     return await find(db)(query)
 }
 
-module.exports.FindWithPaging = async function (dbName, from, limit){
+module.exports.FindWithPaging = async function (dbName, from, limit, query){
     const db = getDb(dbName)
     return await findWithPaging(db)(from, limit)
 }
@@ -53,7 +53,7 @@ module.exports.DeleteOne = async function (dbName, id){
 const findOneAndUpdate = db => entry => db.findOneAndUpdate({_id: entry.id}, entry, {new: true})
 const findOne = db => entry => db.findOne(entry)
 const find = db => query => db.find(query)
-const findWithPaging = db => (from, limit) => db.find({_id: {$gt: from}}).limit(limit)
+const findWithPaging = db => (from, limit, query) => db.find({...query, _id: {$gt: from}}).limit(limit)
 const findById = db => id => db.findById(id)
 const findAllByIds = db => ids => db.find({_id: { $in: ids} })
 const deleteOne = db => id => db.deleteOne({_id: id })

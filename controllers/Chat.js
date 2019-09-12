@@ -2,6 +2,8 @@ const {
     FindOne,
     Create,
     Update,
+    Find,
+    FindWithPaging,
 } = require('../db')
 
 class Chat {
@@ -22,6 +24,14 @@ class Chat {
                     }).catch(console.log)
         return chat
 
+    }
+
+    static async FindChats(bearerId) {
+        return await Find('chatrooms',{participantsIds: bearerId})
+    }
+
+    static async FindChatsWithPaging(bearerId, from, limit) {
+        return await FindWithPaging('chatrooms',from,limit,{participantsIds: bearerId})
     }
 }
 module.exports = Chat
