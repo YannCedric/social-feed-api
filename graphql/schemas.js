@@ -1,3 +1,4 @@
+const moment = require('moment')
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -99,9 +100,47 @@ const CommentType = new GraphQLObjectType({
     })
 })
 
+const ChatMessage = new GraphQLObjectType({
+    name: 'ChatMessage',
+    fields: _=> ({
+        creator: {
+            type: UserType,
+            resolve: ({creatorId}, _, __) => UsersController.FindUserById(creatorId)
+        },
+        timestamp: {
+            type: GraphQLString,
+            resolve: ({timestamp}, _, __) => {
+                const d = new Date(0) 
+                d.setTime(timestamp)
+                let time = moment(d).fromNow()
+                return time
+            }
+        },
+        text: {type: GraphQLString},
+    })
+})
+
+const ChatRoom = new GraphQLObjectType({
+    name: 'ChatRoom',
+    fields: _=> ({
+        participants:  {
+            type: UserType,
+            resolve: ({participantsIds}, _, __) => UsersController.FindUserById(participantsIds)
+        },
+        messages: { type: new GraphQLList(ChatMessage) },
+        creator: {
+            type: UserType,
+            resolve: ({creatorId}, _, __) => UsersController.FindUserById(creatorId)
+        },
+        title: {type: GraphQLString}
+    })
+})
+
+
 module.exports = {
     UserType,
     PostType,
     CommentType,
     AuthType,
+    ChatRoom,
 }
