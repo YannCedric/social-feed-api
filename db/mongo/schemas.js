@@ -43,8 +43,23 @@ const Post = new Schema({
     tagsIds: [ObjectId],
 })
 
+
+const Message = new Schema({
+    creatorId: {type: ObjectId, required: () => this.creator !== null},
+    timestamp : { type : Date, default: Date.now },
+    text: {type: String, required: true},
+})
+
+const ChatRoom = new Schema({
+    participantsIds: [ObjectId],
+    messages: [Message],
+    creatorId: ObjectId,
+    title: String,
+})
+
 module.exports = {
     Users: mongoose.models.Users || mongoose.model('Users', User),
     Comments: mongoose.models.Comments || mongoose.model('Comments', Comment), 
     Posts: mongoose.models.Posts || mongoose.model('Posts', Post),
+    ChatRoom: mongoose.models.ChatRoom || mongoose.model('ChatRoom', ChatRoom),
 }
