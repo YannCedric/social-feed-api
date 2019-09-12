@@ -83,6 +83,14 @@ const DislikePost = { // Protected Route
     resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.DislikePost({postId, likerId})
 }
 
+const DeletePost = { // Protected Route
+    type: PostType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id: postId}, {bearerId:deleterId}) => PostsController.DeletePost({postId, deleterId})
+}
+
 const MakeComment = { // Protected Route
     type: CommentType,
     args: {
@@ -187,4 +195,5 @@ module.exports = {
     CreateChatRoom,
     EditChatRoom,
     DeleteChatRoom,
+    DeletePost,
 }

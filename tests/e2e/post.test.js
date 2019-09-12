@@ -12,11 +12,23 @@ describe('🧪 - Post Scenarios', async _ => {
               }
               token
             }
+            U2: CreateUser(email: "jondoe22@mail.com",password:"test",username:"jonn22",fullname:"jondoe22") {
+                User {
+                id
+                email
+                username
+                fullname
+                }
+                token
+            }
         }`
         const res = await localDriver.send({query: CREATE_USER}).then( res => res.body)
         expect(res.data.CreateUser.User).to.be.a('object')
         User = res.data.CreateUser.User
         User.token = res.data.CreateUser.token
+
+        User2 = res.data.U2.User
+        User2.token = res.data.U2.token
     })
 
     it('Should fail creating a post, due to missing token', async () => {
@@ -161,6 +173,32 @@ describe('🧪 - Post Scenarios', async _ => {
                                 .that.deep.equals({email: User.email})
         
         Post = res.data.DislikePost
+    })
+
+    it('Should fail at deleting a post', async () => {
+        const DELETE_POST = `mutation {
+            DeletePost(id: "${Post.id}"){
+                id
+            }
+        }`
+        const res = await driver.send({query: DELETE_POST}).set("token", User2.token).then( res => res.body)
+        expect(res).to.have.property("errors")
+                   .which.includes.something
+                   .that.has.property("message")
+        expect(res.errors[0].message).to.equal("User doesn't have the right to delete this post.")
+    })
+
+    it('Should successfully delete a post', async () => {
+        const DELETE_POST = `mutation {
+            DeletePost(id: "${Post.id}"){
+                id
+            }
+        }`
+        const res = await driver.send({query: DELETE_POST}).set("token", User.token).then( res => res.body)
+        expect(res).to.not.have.property("errors")
+        expect(res).to.have.property("data").which.has.property("DeletePost") 
+                                            .which.has.property("id")
+                                            .which.equals(Post.id)
     })
 
 })

@@ -1,6 +1,7 @@
 const {
     Find,
     FindWithPaging,
+    FindOne,
     FindById,
     Update,
     FindAllByIds,
@@ -14,6 +15,13 @@ class Posts {
     }
     static async UpdatePost(data) {
         return Update('posts', data)
+    }
+    static async DeletePost({postId:_id,deleterId}){
+        const post = await FindOne("posts",{_id})
+        if(!post.authorId.equals(deleterId)){
+            throw Error("User doesn't have the right to delete this post.")
+        } else 
+            return DeleteOne('posts',_id)
     }
     static async UpdateComment({id, text, picture, editorId}) {
         const comment = await FindById('comments',id)

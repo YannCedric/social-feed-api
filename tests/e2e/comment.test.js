@@ -170,13 +170,12 @@ describe('🧪 - Comments Scenarios', async _ => {
         const LIKE_COMMENT = `mutation {
             DeleteComment(id: "${Comment.id}"){
                 id
-                text
             }
         }`
         const res = await driver.send({query: LIKE_COMMENT}).set("token", User.token).then( res => res.body)
         expect(res).to.have.property("data")
-                   .which.has.property("DeleteComment").which.is.not.null
-                                .that.deep.equals({id: User.id})
+                   .which.has.property("DeleteComment")
+                   .that.deep.equals({id: Comment.id})
     })
 
     it('Should fail at deleting a comment, since its been deleted already', async () => {
