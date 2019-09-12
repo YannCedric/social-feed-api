@@ -133,7 +133,14 @@ const ChatRoom = new GraphQLObjectType({
             type: UserType,
             resolve: ({creatorId}, _, __) => UsersController.FindUserById(creatorId)
         },
-        title: {type: GraphQLString}
+        title: {type: GraphQLString},
+        lastMessage: {
+            type: ChatMessage,
+            resolve: ({messages}, _, __) => {
+                messages.sort((a, b) =>  b.timestamp.getTime()-a.timestamp.getTime())
+                return messages[0]
+            }
+        },
     })
 })
 

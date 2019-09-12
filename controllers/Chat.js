@@ -6,14 +6,14 @@ const {
 
 class Chat {
     static async SendDirectMessage({receiverId, senderId, text}) {
-        const dmId = `DM-${[receiverId, senderId].sort().join('-')}`
-        let chatroom = await FindOne('chatrooms',{title: dmId})
+        const chatId = `DM-${[receiverId, senderId].sort().join('-')}`
+        let chatroom = await FindOne('chatrooms',{title: chatId})
         const message = await Create('messages',{ authorId: senderId, text })
         if(!chatroom){
             return await Create('chatrooms', {
                         participantsIds: [senderId,receiverId],
                         messages: [message],
-                        title: dmId,
+                        title: chatId,
                     }).catch(console.log)
         }
         const chat = await Update('chatrooms', {
