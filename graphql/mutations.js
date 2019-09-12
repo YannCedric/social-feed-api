@@ -10,10 +10,12 @@ const {
     PostType,
     CommentType,
     AuthType,
+    ChatRoom,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
+const ChatController = require('../controllers/Chat')
 
 const CreateUser = {
     type: AuthType,
@@ -125,6 +127,24 @@ const DeleteComment = { // Protected Route
     resolve: (_, {id: commentId}, {bearerId:deleterId}) => PostsController.DeleteComment({commentId, deleterId})
 }
 
+const SendDirectMessage = {
+    type: ChatRoom,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        text: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: (_, {id: receiverId, text}, {bearerId:senderId}) => ChatController.SendDirectMessage({receiverId, senderId, text})
+}
+
+const SendMessage = {
+    type: ChatRoom,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        text: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: (_, {id: receiverId}, {bearerId:senderId}) => ChatController.DirectMessage({receiverId, senderId, text})
+}
+
 module.exports = {
     CreateUser,
     UpdateProfile,
@@ -137,4 +157,6 @@ module.exports = {
     LikeComment,
     DisLikeComment,
     DeleteComment,
+    SendDirectMessage,
+    SendMessage,
 }

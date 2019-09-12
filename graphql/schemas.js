@@ -105,7 +105,7 @@ const ChatMessage = new GraphQLObjectType({
     fields: _=> ({
         creator: {
             type: UserType,
-            resolve: ({creatorId}, _, __) => UsersController.FindUserById(creatorId)
+            resolve: ({authorId}, _, __) => UsersController.FindUserById(authorId)
         },
         timestamp: {
             type: GraphQLString,
@@ -123,9 +123,10 @@ const ChatMessage = new GraphQLObjectType({
 const ChatRoom = new GraphQLObjectType({
     name: 'ChatRoom',
     fields: _=> ({
+        id: {type: GraphQLID},
         participants:  {
-            type: UserType,
-            resolve: ({participantsIds}, _, __) => UsersController.FindUserById(participantsIds)
+            type: new GraphQLList(UserType),
+            resolve: ({participantsIds}, _, __) => UsersController.FindAllUsersByIds(participantsIds)
         },
         messages: { type: new GraphQLList(ChatMessage) },
         creator: {

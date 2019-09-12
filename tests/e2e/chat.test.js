@@ -31,23 +31,67 @@ describe('🧪 - Chat Scenarios', async _ => {
 
     })
     
-    it('Should successfully create a chat room', async () => {
+    it('Should successfully send a message and create a chat room', async () => {
         const CREATE_CHAT_ROOM = `mutation {
-            CreateChat(title: "Some Chat"){
-                id
-                title
-                creator {
-                    id
-                }
+          SendDirectMessage(id:"${User2.id}",text:"Hola"){
+            id
+            title
+            participants {
+              id
             }
+            messages {
+              text
+              timestamp
+              creator {
+                id
+              }
+            }
+          }
         }`
 
         const res =  await driver.send({query: CREATE_CHAT_ROOM}).set("token", User.token).then( res => res.body)
-        expect(res).to.have.property("data").which.has.property("CreateChat").which.is.not.null
-        expect(res.data.CreateChat).to.have.property("id").which.is.not.null
-        expect(res.data.CreateChat).to.have.property("title").which.equals("Some Chat")
-        expect(res.data.CreateChat).to.have.property("creator")
-                                    .which.has.property("id")
-                                    .which.equals(User.id)
+        expect(res).to.have.property("data").which.has.property("SendDirectMessage").which.is.not.null
+        expect(res.data.SendDirectMessage).to.have.property("id").which.is.not.null
+                                          .and.to.have.property("title").which.equals(`DM-${[User.id, User2.id].sort().join('-')}`)
+        expect(res.data.SendDirectMessage).to.have.property("participants")
+                                          .which.deep.includes({id: User.id})
+                                          .and.which.deep.includes({id: User2.id})
+        expect(res.data.SendDirectMessage).to.have.property("messages")
+                                          .to.includes.something
+                                          .which.deep.equals({text: "Hola", creator: {id: User.id}, "timestamp": "a few seconds ago"})
     })
+
+    it('Should successfully send a message and, without creating a chat room', async () => {
+      const CREATE_CHAT_ROOM = `mutation {
+        SendDirectMessage(id:"${User2.id}",text:"Hola back"){
+          id
+          title
+          participants {
+            id
+          }
+          messages {
+            text
+            timestamp
+            creator {
+              id
+            }
+          }
+        }
+      }`
+
+      const res =  await driver.send({query: CREATE_CHAT_ROOM}).set("token", User.token).then( res => res.body)
+      expect(res).to.have.property("data").which.has.property("SendDirectMessage").which.is.not.null
+      expect(res.data.SendDirectMessage).to.have.property("id").which.is.not.null
+                                        .and.to.have.property("title").which.equals(`DM-${[User.id, User2.id].sort().join('-')}`)
+      expect(res.data.SendDirectMessage).to.have.property("participants")
+                                        .which.deep.includes({id: User.id})
+                                        .and.which.deep.includes({id: User2.id})
+      expect(res.data.SendDirectMessage).to.have.property("messages")
+                                          .to.includes.something
+                                          .which.deep.equals({text: "Hola", creator: {id: User.id}, "timestamp": "a few seconds ago"})
+      expect(res.data.SendDirectMessage).to.have.property("messages")
+                                        .to.includes.something
+                                        .which.deep.equals({text: "Hola back", creator: {id: User.id}, "timestamp": "a few seconds ago"})
+    })
+    
 })

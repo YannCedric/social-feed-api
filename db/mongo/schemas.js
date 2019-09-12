@@ -45,7 +45,7 @@ const Post = new Schema({
 
 
 const Message = new Schema({
-    creatorId: {type: ObjectId, required: () => this.creator !== null},
+    authorId: {type: ObjectId, required: () => this.creator !== null},
     timestamp : { type : Date, default: Date.now },
     text: {type: String, required: true},
 })
@@ -61,5 +61,6 @@ module.exports = {
     Users: mongoose.models.Users || mongoose.model('Users', User),
     Comments: mongoose.models.Comments || mongoose.model('Comments', Comment), 
     Posts: mongoose.models.Posts || mongoose.model('Posts', Post),
-    ChatRoom: mongoose.models.ChatRoom || mongoose.model('ChatRoom', ChatRoom),
+    ChatRooms: mongoose.models.ChatRooms || mongoose.model('ChatRooms', ChatRoom),
+    Messages: mongoose.models.Messages || mongoose.model('Messages', Message),
 }

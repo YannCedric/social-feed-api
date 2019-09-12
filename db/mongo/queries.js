@@ -2,6 +2,8 @@ const {
     Users,
     Posts,
     Comments,
+    Messages,
+    ChatRooms,
 } = require('./schemas')
 
 module.exports.Update = async function (dbName, data){
@@ -64,6 +66,10 @@ const getDb = dbName => {
             return Posts
         case 'comments':
             return Comments
+        case 'messages':
+            return Messages
+        case 'chatrooms':
+            return ChatRooms
         default: 
             throw Error(`Database "${dbName}" is not known !`)
     }
