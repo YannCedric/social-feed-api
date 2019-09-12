@@ -173,8 +173,65 @@ describe('🧪 - Chat Scenarios', async _ => {
       }`
 
       const res =  await driver.send({query: GET_CHATS}).set("token", User.token).then( res => res.body)
-      expect(res).to.have.property("data").which.has.property("CreateChatRoom").which.is.not.null
+      expect(res).to.have.property("data").which.has.property("CreateChatRoom").which.has.property("id").which.is.not.null
       expect(res.data.CreateChatRoom).to.have.property("participants").to.deep.includes({id: User.id})
+      ChatRoomId =  res.data.CreateChatRoom.id
+    })
+
+    it('Should successfully edit a chatroom', async () => {
+      const GET_CHATS = `mutation {
+        EditChatRoom(id:"${ChatRoomId}", title:"First Chat Room Edited") {
+          id
+          title
+        }
+      }`
+
+      const res =  await driver.send({query: GET_CHATS}).set("token", User.token).then( res => res.body)
+      expect(res).to.have.property("data").which.has.property("EditChatRoom") 
+                                          .which.has.property("title")
+                                          .which.equals("First Chat Room Edited")
     })
     
+    it('Should fail to edit a chatroom, not authorized', async () => {
+      const EDIT_CHAT = `mutation {
+        EditChatRoom(id:"${ChatRoomId}", title:"First Chat Room Edited??") {
+          id
+          title
+        }
+      }`
+
+      const res =  await driver.send({query: EDIT_CHAT}).set("token", User2.token).then( res => res.body)
+        expect(res).to.have.property("errors")
+                   .which.includes.something
+                   .that.has.property("message")
+        expect(res.errors[0].message).to.equal("User doesn't have the right to edit this chatroom.")
+    })
+
+    it('Should fail to delete a chatroom, not authorized', async () => {
+      const EDIT_CHAT = `mutation {
+        DeleteChatRoom(id:"${ChatRoomId}") {
+          id
+        }
+      }`
+
+      const res =  await driver.send({query: EDIT_CHAT}).set("token", User2.token).then( res => res.body)
+        expect(res).to.have.property("errors")
+                   .which.includes.something
+                   .that.has.property("message")
+        expect(res.errors[0].message).to.equal("User doesn't have the right to delete this chatroom.")
+    })
+
+    it('Should successfully delete a chatroom', async () => {
+      const EDIT_CHAT = `mutation {
+        DeleteChatRoom(id:"${ChatRoomId}") {
+          id
+        }
+      }`
+
+      const res =  await driver.send({query: EDIT_CHAT}).set("token", User.token).then( res => res.body)
+      expect(res).to.not.have.property("errors")
+      expect(res).to.have.property("data").which.has.property("DeleteChatRoom") 
+                                          .which.has.property("id")
+                                          .which.equals(ChatRoomId)
+    })
 })

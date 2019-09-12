@@ -28,6 +28,8 @@ const {
     SendDirectMessage,
     SendRoomMessage,
     CreateChatRoom,
+    EditChatRoom,
+    DeleteChatRoom,
 } = require('./mutations')
 
 const {
@@ -64,6 +66,8 @@ const schema = new GraphQLSchema({
             SendDirectMessage,
             SendRoomMessage,
             CreateChatRoom,
+            EditChatRoom,
+            DeleteChatRoom,
         },
     }),
     subscription: new GraphQLObjectType({

@@ -56,7 +56,7 @@ const find = db => query => db.find(query)
 const findWithPaging = db => (from, limit, query) => db.find({...query, _id: {$gt: from}}).limit(limit)
 const findById = db => id => db.findById(id)
 const findAllByIds = db => ids => db.find({_id: { $in: ids} })
-const deleteOne = db => id => db.deleteOne({_id: id })
+const deleteOne = db => id => db.findOneAndRemove({_id: id })
 
 const getDb = dbName => {
     switch(dbName) {

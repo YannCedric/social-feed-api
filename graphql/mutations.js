@@ -153,6 +153,23 @@ const CreateChatRoom = {
     resolve: (_, {title}, {bearerId:creatorId}) => ChatController.CreateChatRoom({creatorId, title})
 }
 
+const EditChatRoom = {
+    type: ChatRoom,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+        title: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: (_, {id,title}, {bearerId:editorId}) => ChatController.EditChatRoom({id,title,editorId})
+}
+
+const DeleteChatRoom = {
+    type: ChatRoom,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id}, {bearerId:deleterId}) => ChatController.DeleteChatRoom({id,deleterId})
+}
+
 module.exports = {
     CreateUser,
     UpdateProfile,
@@ -168,4 +185,6 @@ module.exports = {
     SendDirectMessage,
     SendRoomMessage,
     CreateChatRoom,
+    EditChatRoom,
+    DeleteChatRoom,
 }
