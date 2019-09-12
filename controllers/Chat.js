@@ -33,5 +33,19 @@ class Chat {
     static async FindChatsWithPaging(bearerId, from, limit) {
         return await FindWithPaging('chatrooms',from,limit,{participantsIds: bearerId})
     }
+
+    static async CreateChatRoom({creatorId, title}){
+        return Create('chatrooms', {
+            creatorId,
+            participantsIds: [creatorId],
+            title: title,
+        })
+    }
+
+    static async SendRoomMessage({roomId:id, text, senderId:authorId}){
+        const message = await Create('messages',{ authorId, text })
+        console.log({message})
+        return Update('chatrooms', { id, $push: {messages: message} })
+    }
 }
 module.exports = Chat

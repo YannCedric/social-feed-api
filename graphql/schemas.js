@@ -136,7 +136,7 @@ const ChatRoom = new GraphQLObjectType({
         title: {type: GraphQLString},
         lastMessage: {
             type: ChatMessage,
-            resolve: ({messages}, _, __) => {
+            resolve: ({messages=[]}, _, __) => {
                 messages.sort((a, b) =>  b.timestamp.getTime()-a.timestamp.getTime())
                 return messages[0]
             }

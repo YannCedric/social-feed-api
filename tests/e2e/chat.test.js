@@ -160,5 +160,21 @@ describe('🧪 - Chat Scenarios', async _ => {
         expect( item ).to.deep.includes({id: User.id})
       })
     })
+
+    it('Should successfully create a chatroom', async () => {
+      const GET_CHATS = `mutation {
+        CreateChatRoom(title:"First Chat Room") {
+          id
+          title
+          participants {
+            id
+          }
+        }
+      }`
+
+      const res =  await driver.send({query: GET_CHATS}).set("token", User.token).then( res => res.body)
+      expect(res).to.have.property("data").which.has.property("CreateChatRoom").which.is.not.null
+      expect(res.data.CreateChatRoom).to.have.property("participants").to.deep.includes({id: User.id})
+    })
     
 })

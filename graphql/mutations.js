@@ -136,13 +136,21 @@ const SendDirectMessage = {
     resolve: (_, {id: receiverId, text}, {bearerId:senderId}) => ChatController.SendDirectMessage({receiverId, senderId, text})
 }
 
-const SendMessage = {
+const SendRoomMessage = {
     type: ChatRoom,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
         text: {type: new GraphQLNonNull(GraphQLString)},
     },
-    resolve: (_, {id: receiverId}, {bearerId:senderId}) => ChatController.DirectMessage({receiverId, senderId, text})
+    resolve: (_, {id: roomId, text}, {bearerId:senderId}) => ChatController.SendRoomMessage({roomId, text, senderId})
+}
+
+const CreateChatRoom = {
+    type: ChatRoom,
+    args: {
+        title: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: (_, {title}, {bearerId:creatorId}) => ChatController.CreateChatRoom({creatorId, title})
 }
 
 module.exports = {
@@ -158,5 +166,6 @@ module.exports = {
     DisLikeComment,
     DeleteComment,
     SendDirectMessage,
-    SendMessage,
+    SendRoomMessage,
+    CreateChatRoom,
 }
