@@ -1,7 +1,7 @@
 describe('🧪 - User Scenarios', async _ => {
   it('Should fail because sign-up requires email', async () => {
     const CREATE_USER1 = `mutation {
-        CreateUser(password:"wtvs") {
+        SignUp(password:"wtvs") {
           User {
             email
           }
@@ -15,7 +15,7 @@ describe('🧪 - User Scenarios', async _ => {
 
   it('Should fail because sign-up requires password', async () => {
     const CREATE_USER2 = `mutation{
-        CreateUser(email:"jon") {
+        SignUp(email:"jon") {
           User {
             email
           }
@@ -30,7 +30,7 @@ describe('🧪 - User Scenarios', async _ => {
   let NewUser = {}
   it('Should sign-up user properly & provide token', async () => {
     const CREATE_USER = `mutation{
-        CreateUser(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
+        SignUp(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
           User {
             id
             email
@@ -41,14 +41,14 @@ describe('🧪 - User Scenarios', async _ => {
         }
     }`
     const res = await driver.send({query: CREATE_USER}).then( res => res.body)
-    expect(res.data.CreateUser.User).to.be.a('object')
-    expect(res.data.CreateUser.User.id).to.be.not.null
-    expect(res.data.CreateUser.token).to.not.be.null
-    expect(res.data.CreateUser.User.email).to.equal('jondoe@mail.com')
-    expect(res.data.CreateUser.User.username).to.equal('jon')
-    expect(res.data.CreateUser.User.fullname).to.equal('jondoe')
-    NewUser = res.data.CreateUser.User
-    NewUser.token = res.data.CreateUser.token
+    expect(res.data.SignUp.User).to.be.a('object')
+    expect(res.data.SignUp.User.id).to.be.not.null
+    expect(res.data.SignUp.token).to.not.be.null
+    expect(res.data.SignUp.User.email).to.equal('jondoe@mail.com')
+    expect(res.data.SignUp.User.username).to.equal('jon')
+    expect(res.data.SignUp.User.fullname).to.equal('jondoe')
+    NewUser = res.data.SignUp.User
+    NewUser.token = res.data.SignUp.token
   })
 
   it('Should login after sign-up user properly', async () => {
@@ -114,13 +114,13 @@ describe('🧪 - User Scenarios', async _ => {
 
   it('Should fail because of duplicate users', async () => {
     const CREATE_USER = `mutation{
-        User1: CreateUser(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
+        User1: SignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
           User {
             id
             username
           }
         }
-        User2: CreateUser(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
+        User2: SignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
           User {
             id
           }

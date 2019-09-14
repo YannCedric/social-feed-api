@@ -2,7 +2,7 @@ describe('🧪 - Comments Scenarios', async _ => {
     before( async () => {
         let localDriver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") 
         const CREATE_USER = `mutation{
-            U1: CreateUser(email: "jondoee@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
+            U1: SignUp(email: "jondoee@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
               User {
                 id
                 email
@@ -11,7 +11,7 @@ describe('🧪 - Comments Scenarios', async _ => {
               }
               token
             }
-            U2: CreateUser(email: "jondoe2@mail.com",password:"test",username:"jon2",fullname:"jondoe2") {
+            U2: SignUp(email: "jondoe2@mail.com",password:"test",username:"jon2",fullname:"jondoe2") {
                 User {
                   id
                   email

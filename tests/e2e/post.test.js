@@ -3,7 +3,7 @@ describe('🧪 - Post Scenarios', async _ => {
         let localDriver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") 
         
         const CREATE_USER = `mutation{
-            CreateUser(email: "jondo0@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
+            SignUp(email: "jondo0@mail.com",password:"test",username:"jonn",fullname:"jondoe") {
               User {
                 id
                 email
@@ -12,7 +12,7 @@ describe('🧪 - Post Scenarios', async _ => {
               }
               token
             }
-            U2: CreateUser(email: "jondoe22@mail.com",password:"test",username:"jonn22",fullname:"jondoe22") {
+            U2: SignUp(email: "jondoe22@mail.com",password:"test",username:"jonn22",fullname:"jondoe22") {
                 User {
                 id
                 email
@@ -23,9 +23,9 @@ describe('🧪 - Post Scenarios', async _ => {
             }
         }`
         const res = await localDriver.send({query: CREATE_USER}).then( res => res.body)
-        expect(res.data.CreateUser.User).to.be.a('object')
-        User = res.data.CreateUser.User
-        User.token = res.data.CreateUser.token
+        expect(res.data.SignUp.User).to.be.a('object')
+        User = res.data.SignUp.User
+        User.token = res.data.SignUp.token
 
         User2 = res.data.U2.User
         User2.token = res.data.U2.token

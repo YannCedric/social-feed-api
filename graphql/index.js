@@ -14,7 +14,7 @@ const {
 } = require('./queries')
 
 const {
-    CreateUser,
+    SignUp,
     UpdateProfile,
     CreatePost,
     UpdatePost,
@@ -53,7 +53,7 @@ const schema = new GraphQLSchema({
     mutation: new GraphQLObjectType({
         name: 'RootMutation',
         fields: {
-            CreateUser,
+            SignUp,
             UpdateProfile,
             CreatePost,
             UpdatePost,

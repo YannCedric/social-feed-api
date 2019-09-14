@@ -17,7 +17,7 @@ const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
 const ChatController = require('../controllers/Chat')
 
-const CreateUser = {
+const SignUp = {
     type: AuthType,
     args: { 
         email: {type: new GraphQLNonNull(GraphQLString)},
@@ -28,7 +28,7 @@ const CreateUser = {
         bio: {type: GraphQLString}, 
     },
     resolve: async (_, args, context) => {
-        const {User,token} = await UsersController.CreateUser(args)
+        const {User,token} = await UsersController.SignUp(args)
         if (context.pubsub) context.pubsub.publish('user', {UsersSub: User})
         return {User, token}
     }
@@ -179,7 +179,7 @@ const DeleteChatRoom = {
 }
 
 module.exports = {
-    CreateUser,
+    SignUp,
     UpdateProfile,
     CreatePost,
     UpdatePost,

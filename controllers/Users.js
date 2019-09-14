@@ -17,7 +17,7 @@ const PASSWORDS_SECRET = "weak-a-secret"
 const SALT_ROUNDS = 11
 
 class Users {
-    static async CreateUser(user) {
+    static async SignUp(user) {
         const User = await Create('users',user)
         const token = this.ProvideToken({bearerId: User.id})
         return {User,token}
