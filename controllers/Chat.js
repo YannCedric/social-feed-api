@@ -7,8 +7,13 @@ const {
     DeleteOne,
 } = require('../db')
 
+
+const EVENTS = {
+    CHATS: `CHAT`,
+}
+
 class Chat {
-    static async SendDirectMessage({receiverId, senderId, text}) {
+    static async SendDirectMessage({receiverId, senderId, text,pubsub}) {
         const chatId = `DM-${[receiverId, senderId].sort().join('-')}`
         let chatroom = await FindOne('chatrooms',{title: chatId})
         const message = await Create('messages',{ authorId: senderId, text })
@@ -20,11 +25,12 @@ class Chat {
                         title: chatId,
                     }).catch(console.log)
         }
-        const chat = await Update('chatrooms', {
+
+        pubsub.publish(`${EVENTS.CHATS}-${chatroom._id}`, {ChatStream: message})
+        return await Update('chatrooms', {
                         id: chatroom._id,
                         $push: {messages: message}
                     }).catch(console.log)
-        return chat
 
     }
 
@@ -44,9 +50,9 @@ class Chat {
         })
     }
 
-    static async SendRoomMessage({roomId:id, text, senderId:authorId}){
+    static async SendRoomMessage({roomId:id, text, senderId:authorId,pubsub}){
         const message = await Create('messages',{ authorId, text })
-        console.log({message})
+        pubsub.publish(`${EVENTS.CHATS}-${id}`, {ChatStream: message})
         return Update('chatrooms', { id, $push: {messages: message} })
     }
 
@@ -64,6 +70,13 @@ class Chat {
             throw Error("User doesn't have the right to delete this chatroom.")
         } else 
             return DeleteOne('chatrooms',_id)
+    }
+
+    static async SubscribeToChat({bearerId,chatId,pubsub}){
+        const chatroom = await FindOne("chatrooms",{_id: chatId})
+        if(!chatroom) throw Error("Chat room doesn't exist!")
+        else if (!chatroom.participantsIds.map(e => e.toString()).includes(bearerId.toString())) throw Error("User is not allowed in this chatroom.")
+        else return pubsub.asyncIterator(`${EVENTS.CHATS}-${chatId}`)
     }
 
 }

@@ -50,11 +50,14 @@ class Users {
     }
     static async Authenticate(req){
         if(req && req.headers && req.headers.token) {
-            let {payload:{bearerId}} = jwt.verify(req.headers.token,TOKEN_SECRET)
-            const user = await this.FindUserById(bearerId)
-            if (!user) throw Error("User doesn't exist")
-            return bearerId
+            return this.VerifyToken(req.headers.token)
         }
+    }
+    static async VerifyToken(token){
+        let {payload:{bearerId}} = jwt.verify(token,TOKEN_SECRET)
+        const user = await this.FindUserById(bearerId)
+        if (!user) throw Error("User doesn't exist")
+        return bearerId
     }
     static async ProvideToken(payload){
        return jwt.sign({payload, timestamp: Date.now()}, TOKEN_SECRET, {expiresIn:TOKEN_EXPIRY})

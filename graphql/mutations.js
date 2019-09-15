@@ -141,7 +141,7 @@ const SendDirectMessage = {
         id: {type: new GraphQLNonNull(GraphQLID)},
         text: {type: new GraphQLNonNull(GraphQLString)},
     },
-    resolve: (_, {id: receiverId, text}, {bearerId:senderId}) => ChatController.SendDirectMessage({receiverId, senderId, text})
+    resolve: (_, {id: receiverId, text}, {bearerId:senderId, pubsub}) => ChatController.SendDirectMessage({receiverId, senderId, text, pubsub})
 }
 
 const SendRoomMessage = {
@@ -150,7 +150,7 @@ const SendRoomMessage = {
         id: {type: new GraphQLNonNull(GraphQLID)},
         text: {type: new GraphQLNonNull(GraphQLString)},
     },
-    resolve: (_, {id: roomId, text}, {bearerId:senderId}) => ChatController.SendRoomMessage({roomId, text, senderId})
+    resolve: (_, {id: roomId, text}, {bearerId:senderId,pubsub}) => ChatController.SendRoomMessage({roomId, text, senderId,pubsub})
 }
 
 const CreateChatRoom = {

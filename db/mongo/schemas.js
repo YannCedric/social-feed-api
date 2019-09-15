@@ -53,7 +53,7 @@ const Message = new Schema({
 const ChatRoom = new Schema({
     participantsIds: [ObjectId],
     messages: [Message],
-    creatorId: ObjectId,
+    creatorId: {type: ObjectId, required: true},
     title: String,
 })
 

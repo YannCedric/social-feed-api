@@ -34,7 +34,7 @@ const {
 } = require('./mutations')
 
 const {
-    UsersSub,
+    ChatStream,
 } = require('./subscriptions')
 
 const schema = new GraphQLSchema({
@@ -75,7 +75,7 @@ const schema = new GraphQLSchema({
     subscription: new GraphQLObjectType({
         name: 'RootSub',
         fields: {
-            UsersSub,
+            ChatStream,
         }
     }),
 })

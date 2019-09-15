@@ -151,4 +151,5 @@ module.exports = {
     CommentType,
     AuthType,
     ChatRoom,
+    ChatMessage,
 }
