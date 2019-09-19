@@ -2,4 +2,4 @@
 
 Simple GraphQL api, providing basic social media functionality.
 
-<iframe style="height: 80vh; width:80vw" src="./doc/schema/index.html"/>
+Documentation [Here](http://yanncedric.github.io/social-feed-api)
