@@ -2,7 +2,7 @@ describe('🧪 - Chat Scenarios', async _ => {
     before( async () => {
         let localDriver = chai.request("http://localhost:8000").post('/').set("content-type", "application/json") 
         const CREATE_USER = `mutation{
-          U1: SignUp(email: "jondoe3@mail.com",password:"test",username:"jonn3",fullname:"jondoe3") {
+          U1: UserSignUp(email: "jondoe3@mail.com",password:"test",username:"jonn3",fullname:"jondoe3") {
             User {
               id
               email
@@ -11,7 +11,7 @@ describe('🧪 - Chat Scenarios', async _ => {
             }
             token
           }
-          U2: SignUp(email: "jondoe4@mail.com",password:"test",username:"jonn4",fullname:"jondoe4") {
+          U2: UserSignUp(email: "jondoe4@mail.com",password:"test",username:"jonn4",fullname:"jondoe4") {
               User {
                 id
                 email
@@ -20,7 +20,7 @@ describe('🧪 - Chat Scenarios', async _ => {
               }
               token
             }
-          U3: SignUp(email: "jondoe5@mail.com",password:"test",username:"jonn5",fullname:"jondoe5") {
+          U3: UserSignUp(email: "jondoe5@mail.com",password:"test",username:"jonn5",fullname:"jondoe5") {
               User {
                 id
                 email
@@ -163,7 +163,7 @@ describe('🧪 - Chat Scenarios', async _ => {
 
     it('Should successfully create a chatroom', async () => {
       const GET_CHATS = `mutation {
-        CreateChatRoom(title:"First Chat Room") {
+        ChatRoomCreate(title:"First Chat Room") {
           id
           title
           participants {
@@ -173,28 +173,28 @@ describe('🧪 - Chat Scenarios', async _ => {
       }`
 
       const res =  await driver.send({query: GET_CHATS}).set("token", User.token).then( res => res.body)
-      expect(res).to.have.property("data").which.has.property("CreateChatRoom").which.has.property("id").which.is.not.null
-      expect(res.data.CreateChatRoom).to.have.property("participants").to.deep.includes({id: User.id})
-      ChatRoomId =  res.data.CreateChatRoom.id
+      expect(res).to.have.property("data").which.has.property("ChatRoomCreate").which.has.property("id").which.is.not.null
+      expect(res.data.ChatRoomCreate).to.have.property("participants").to.deep.includes({id: User.id})
+      ChatRoomId =  res.data.ChatRoomCreate.id
     })
 
     it('Should successfully edit a chatroom', async () => {
       const GET_CHATS = `mutation {
-        EditChatRoom(id:"${ChatRoomId}", title:"First Chat Room Edited") {
+        ChatRoomEdit(id:"${ChatRoomId}", title:"First Chat Room Edited") {
           id
           title
         }
       }`
 
       const res =  await driver.send({query: GET_CHATS}).set("token", User.token).then( res => res.body)
-      expect(res).to.have.property("data").which.has.property("EditChatRoom") 
+      expect(res).to.have.property("data").which.has.property("ChatRoomEdit") 
                                           .which.has.property("title")
                                           .which.equals("First Chat Room Edited")
     })
     
     it('Should fail to edit a chatroom, not authorized', async () => {
       const EDIT_CHAT = `mutation {
-        EditChatRoom(id:"${ChatRoomId}", title:"First Chat Room Edited??") {
+        ChatRoomEdit(id:"${ChatRoomId}", title:"First Chat Room Edited??") {
           id
           title
         }
@@ -209,7 +209,7 @@ describe('🧪 - Chat Scenarios', async _ => {
 
     it('Should fail to delete a chatroom, not authorized', async () => {
       const EDIT_CHAT = `mutation {
-        DeleteChatRoom(id:"${ChatRoomId}") {
+        ChatRoomDelete(id:"${ChatRoomId}") {
           id
         }
       }`
@@ -223,14 +223,14 @@ describe('🧪 - Chat Scenarios', async _ => {
 
     it('Should successfully delete a chatroom', async () => {
       const EDIT_CHAT = `mutation {
-        DeleteChatRoom(id:"${ChatRoomId}") {
+        ChatRoomDelete(id:"${ChatRoomId}") {
           id
         }
       }`
 
       const res =  await driver.send({query: EDIT_CHAT}).set("token", User.token).then( res => res.body)
       expect(res).to.not.have.property("errors")
-      expect(res).to.have.property("data").which.has.property("DeleteChatRoom") 
+      expect(res).to.have.property("data").which.has.property("ChatRoomDelete") 
                                           .which.has.property("id")
                                           .which.equals(ChatRoomId)
     })

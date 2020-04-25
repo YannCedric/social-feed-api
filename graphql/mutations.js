@@ -11,30 +11,50 @@ const {
     CommentType,
     AuthType,
     ChatRoom,
+    EventType,
+    FollowType,
 } = require('./schemas')
 
 const UsersController = require('../controllers/Users')
 const PostsController = require('../controllers/Posts')
 const ChatController = require('../controllers/Chat')
+const EventsController = require('../controllers/Events')
 
-const SignUp = {
+module.exports.UserSignUp = {
     type: AuthType,
     args: { 
         email: {type: new GraphQLNonNull(GraphQLString)},
         password: {type: new GraphQLNonNull(GraphQLString)},
-        username: {type: GraphQLString},
+        username: {type: new GraphQLNonNull(GraphQLString)},
+        interests: {type: new GraphQLList(GraphQLString)},
         fullname: {type: GraphQLString},
         picture: {type: GraphQLString},
         bio: {type: GraphQLString}, 
     },
     resolve: async (_, args, context) => {
-        const {User,token} = await UsersController.SignUp(args)
-        if (context.pubsub) context.pubsub.publish('user', {UsersSub: User})
+        const {User,token} = await UsersController.UserSignUp(args)
         return {User, token}
     }
 }
 
-const UpdateProfile = {
+module.exports.UserFollow = {
+    type: FollowType,
+    args: { 
+        id: {type: new GraphQLNonNull(GraphQLID)}
+    },
+    resolve: async (_ , {id:followingId}, {bearerId:followerId}) => UsersController.UserFollow({followerId, followingId})
+}
+
+module.exports.UserUnFollow = {
+    type: FollowType,
+    args: { 
+        id: {type: new GraphQLNonNull(GraphQLID)}
+    },
+    resolve: async (_ , {id:unfollowingId}, {bearerId:unfollowerId}) => UsersController.UserUnFollow({unfollowerId, unfollowingId})
+}
+
+
+module.exports.UserUpdate = {
     type: UserType,
     args: { 
         fullname: {type: GraphQLString},
@@ -46,17 +66,31 @@ const UpdateProfile = {
     resolve: (_, args, {bearerId}) => UsersController.UpdateUser({...args, id: bearerId})
 }
 
-const CreatePost = { // Protected Route
+module.exports.PostCreate = {
     type: PostType,
     args: {
         text: {type: new GraphQLNonNull(GraphQLString)},
         picture: {type: GraphQLString},
         tags: {type: new GraphQLList(GraphQLString)},
     },
-    resolve: (_, args, {bearerId:authorId}) => PostsController.CreatePost({...args, authorId})
+    resolve: (_, args, {bearerId:authorId}) => PostsController.PostCreate({...args, authorId})
 }
 
-const UpdatePost = { // Protected Route
+module.exports.EventCreate = {
+    type: EventType,
+    args: {
+        name: {type: new GraphQLNonNull(GraphQLString)},
+        type: {type: new GraphQLNonNull(GraphQLString)},
+        level: {type: new GraphQLNonNull(GraphQLString)},
+        description: {type: new GraphQLNonNull(GraphQLString)},
+        dateFrom: {type: new GraphQLNonNull(GraphQLString)},
+        timeFrom: {type: new GraphQLNonNull(GraphQLString)},
+        timeTo: {type: new GraphQLNonNull(GraphQLString)},
+    },
+    resolve: (_, args, {bearerId:creatorId}) => EventsController.EventCreate({...args, creatorId, participantsIds: [creatorId]})
+}
+
+module.exports.PostUpdate = {
     type: PostType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -64,44 +98,44 @@ const UpdatePost = { // Protected Route
         picture: {type: GraphQLString},
         tags: {type: new GraphQLList(GraphQLString)},
     },
-    resolve: (_, args, {bearerId:authorId}) => PostsController.UpdatePost({...args, authorId})
+    resolve: (_, args, {bearerId:authorId}) => PostsController.PostUpdate({...args, authorId})
 }
 
-const LikePost = { // Protected Route
+module.exports.PostLike = {
     type: PostType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.LikePost({postId, likerId})
+    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.PostLike({postId, likerId})
 }
 
-const DislikePost = { // Protected Route
+module.exports.PostDislike = {
     type: PostType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.DislikePost({postId, likerId})
+    resolve: (_, {id: postId}, {bearerId:likerId}) => PostsController.PostDislike({postId, likerId})
 }
 
-const DeletePost = { // Protected Route
+module.exports.PostDelete = {
     type: PostType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: postId}, {bearerId:deleterId}) => PostsController.DeletePost({postId, deleterId})
+    resolve: (_, {id: postId}, {bearerId:deleterId}) => PostsController.PostDelete({postId, deleterId})
 }
 
-const MakeComment = { // Protected Route
+module.exports.CommentCreate = {
     type: CommentType,
     args: {
         postId: {type: new GraphQLNonNull(GraphQLID)},
         text: {type: new GraphQLNonNull(GraphQLString)},
         picture: {type: GraphQLString},
     },
-    resolve: (_, args, {bearerId:authorId}) => PostsController.MakeComment({...args, authorId})
+    resolve: (_, args, {bearerId:authorId}) => PostsController.CommentCreate({...args, authorId})
 }
 
-const EditComment = { // Protected Route
+module.exports.CommentUpdate = {
     type: CommentType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -111,31 +145,31 @@ const EditComment = { // Protected Route
     resolve: (_, {id, text, picture}, {bearerId:editorId}) => PostsController.UpdateComment({id, text, picture,editorId})
 }
 
-const LikeComment = { // Protected Route
+module.exports.CommentLike = {
     type: CommentType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: commentId}, {bearerId:likerId}) => PostsController.LikeComment({commentId, likerId})
+    resolve: (_, {id: commentId}, {bearerId:likerId}) => PostsController.CommentLike({commentId, likerId})
 }
 
-const DisLikeComment = { // Protected Route
+module.exports.CommentDisLike = {
     type: CommentType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: commentId}, {bearerId:dislikerId}) => PostsController.DisLikeComment({commentId, dislikerId})
+    resolve: (_, {id: commentId}, {bearerId:dislikerId}) => PostsController.CommentDisLike({commentId, dislikerId})
 }
 
-const DeleteComment = { // Protected Route
+module.exports.CommentDelete = {
     type: CommentType,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id: commentId}, {bearerId:deleterId}) => PostsController.DeleteComment({commentId, deleterId})
+    resolve: (_, {id: commentId}, {bearerId:deleterId}) => PostsController.CommentDelete({commentId, deleterId})
 }
 
-const SendDirectMessage = {
+module.exports.SendDirectMessage = {
     type: ChatRoom,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -144,7 +178,7 @@ const SendDirectMessage = {
     resolve: (_, {id: receiverId, text}, {bearerId:senderId, pubsub}) => ChatController.SendDirectMessage({receiverId, senderId, text, pubsub})
 }
 
-const SendRoomMessage = {
+module.exports.SendRoomMessage = {
     type: ChatRoom,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
@@ -153,47 +187,43 @@ const SendRoomMessage = {
     resolve: (_, {id: roomId, text}, {bearerId:senderId,pubsub}) => ChatController.SendRoomMessage({roomId, text, senderId,pubsub})
 }
 
-const CreateChatRoom = {
+module.exports.ChatRoomCreate = {
     type: ChatRoom,
     args: {
         title: {type: new GraphQLNonNull(GraphQLString)},
     },
-    resolve: (_, {title}, {bearerId:creatorId}) => ChatController.CreateChatRoom({creatorId, title})
+    resolve: (_, {title}, {bearerId:creatorId}) => ChatController.ChatRoomCreate({creatorId, title})
 }
 
-const EditChatRoom = {
+module.exports.ChatRoomEdit = {
     type: ChatRoom,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
         title: {type: new GraphQLNonNull(GraphQLString)},
     },
-    resolve: (_, {id,title}, {bearerId:editorId}) => ChatController.EditChatRoom({id,title,editorId})
+    resolve: (_, {id,title}, {bearerId:editorId}) => ChatController.ChatRoomEdit({id,title,editorId})
 }
 
-const DeleteChatRoom = {
+module.exports.ChatRoomDelete = {
     type: ChatRoom,
     args: {
         id: {type: new GraphQLNonNull(GraphQLID)},
     },
-    resolve: (_, {id}, {bearerId:deleterId}) => ChatController.DeleteChatRoom({id,deleterId})
+    resolve: (_, {id}, {bearerId:deleterId}) => ChatController.ChatRoomDelete({id,deleterId})
 }
 
-module.exports = {
-    SignUp,
-    UpdateProfile,
-    CreatePost,
-    UpdatePost,
-    MakeComment,
-    EditComment,
-    LikePost,
-    DislikePost,
-    LikeComment,
-    DisLikeComment,
-    DeleteComment,
-    SendDirectMessage,
-    SendRoomMessage,
-    CreateChatRoom,
-    EditChatRoom,
-    DeleteChatRoom,
-    DeletePost,
+module.exports.EventJoin = {
+    type: EventType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id}, {bearerId:joinerId}) => EventsController.EventJoin({id,joinerId})
+}
+
+module.exports.EventLeave = {
+    type: EventType,
+    args: {
+        id: {type: new GraphQLNonNull(GraphQLID)},
+    },
+    resolve: (_, {id}, {bearerId:leaverId}) => EventsController.EventLeave({id,leaverId})
 }

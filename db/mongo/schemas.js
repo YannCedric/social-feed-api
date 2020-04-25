@@ -21,6 +21,7 @@ const User = new Schema({
     bio: String,
     followersIds: [ObjectId],
     followingIds: [ObjectId],
+    interests: [String]
 })
 
 const Comment = new Schema({
@@ -30,6 +31,7 @@ const Comment = new Schema({
     likersIds: [ObjectId],
     dislikersIds: [ObjectId],
     authorId: {type: ObjectId, required: () => this.authorId !== null},
+    timestamp : { type : Date, default: Date.now },
 })
 
 const Post = new Schema({
@@ -41,8 +43,24 @@ const Post = new Schema({
     likersIds: [ObjectId],
     dislikersIds: [ObjectId],
     tagsIds: [ObjectId],
+    timestamp : { type : Date, default: Date.now },
 })
 
+const Event = new Schema({
+    name: {type: String, required: true},
+    type: {type: String, required: true},
+    description: {type: String, required: true},
+    level: {type: String, required: true, enum: ["beginner","intermediate","advanced"]},
+    creatorId: {type: ObjectId, required: () => this.creatorId !== null },
+    participantsIds: [ObjectId],
+    postsIds: [Post],
+    dateFrom: {type: String, required: true},
+    timeFrom: {type: String, required: true},
+    timeTo: {type: String, required: true, 
+    timestamp : { type : Date, default: Date.now },
+        // validate: timeTo => validate(timeTo)
+    },
+})
 
 const Message = new Schema({
     authorId: {type: ObjectId, required: () => this.creator !== null},
@@ -63,4 +81,5 @@ module.exports = {
     Posts: mongoose.models.Posts || mongoose.model('Posts', Post),
     ChatRooms: mongoose.models.ChatRooms || mongoose.model('ChatRooms', ChatRoom),
     Messages: mongoose.models.Messages || mongoose.model('Messages', Message),
+    Events: mongoose.models.Events || mongoose.model('Events', Event),
 }

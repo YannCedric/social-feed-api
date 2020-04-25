@@ -3,35 +3,9 @@ const {
     GraphQLObjectType,
 } = require('graphql')
 
-const {
-    User,
-    Users,
-    Post,
-    Posts,
-    Login,
-    LoginWithToken,
-    Chats,
-} = require('./queries')
+const Queries = require('./queries')
 
-const {
-    SignUp,
-    UpdateProfile,
-    CreatePost,
-    UpdatePost,
-    DeletePost,
-    MakeComment,
-    EditComment,
-    LikePost,
-    DislikePost,
-    LikeComment,
-    DisLikeComment,
-    DeleteComment,
-    SendDirectMessage,
-    SendRoomMessage,
-    CreateChatRoom,
-    EditChatRoom,
-    DeleteChatRoom,
-} = require('./mutations')
+const Mutations = require('./mutations')
 
 const {
     ChatStream,
@@ -40,37 +14,11 @@ const {
 const schema = new GraphQLSchema({
     query: new GraphQLObjectType({
         name: 'RootQuery',
-        fields: {
-            User,
-            Users,
-            Post,
-            Posts,
-            Login,
-            LoginWithToken,
-            Chats,
-        }
+        fields: Queries
     }),
     mutation: new GraphQLObjectType({
         name: 'RootMutation',
-        fields: {
-            SignUp,
-            UpdateProfile,
-            CreatePost,
-            UpdatePost,
-            DeletePost,
-            MakeComment,
-            EditComment,
-            LikePost,
-            DislikePost,
-            LikeComment,
-            DisLikeComment,
-            DeleteComment,
-            SendDirectMessage,
-            SendRoomMessage,
-            CreateChatRoom,
-            EditChatRoom,
-            DeleteChatRoom,
-        },
+        fields: Mutations,
     }),
     subscription: new GraphQLObjectType({
         name: 'RootSub',

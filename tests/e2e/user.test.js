@@ -1,7 +1,7 @@
 describe('🧪 - User Scenarios', async _ => {
   it('Should fail because sign-up requires email', async () => {
     const CREATE_USER1 = `mutation {
-        SignUp(password:"wtvs") {
+        UserSignUp(password:"wtvs") {
           User {
             email
           }
@@ -15,7 +15,7 @@ describe('🧪 - User Scenarios', async _ => {
 
   it('Should fail because sign-up requires password', async () => {
     const CREATE_USER2 = `mutation{
-        SignUp(email:"jon") {
+        UserSignUp(email:"jon") {
           User {
             email
           }
@@ -30,7 +30,7 @@ describe('🧪 - User Scenarios', async _ => {
   let NewUser = {}
   it('Should sign-up user properly & provide token', async () => {
     const CREATE_USER = `mutation{
-        SignUp(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
+        UserSignUp(email: "jondoe@mail.com",password:"test",username:"jon",fullname:"jondoe") {
           User {
             id
             email
@@ -41,19 +41,19 @@ describe('🧪 - User Scenarios', async _ => {
         }
     }`
     const res = await driver.send({query: CREATE_USER}).then( res => res.body)
-    expect(res.data.SignUp.User).to.be.a('object')
-    expect(res.data.SignUp.User.id).to.be.not.null
-    expect(res.data.SignUp.token).to.not.be.null
-    expect(res.data.SignUp.User.email).to.equal('jondoe@mail.com')
-    expect(res.data.SignUp.User.username).to.equal('jon')
-    expect(res.data.SignUp.User.fullname).to.equal('jondoe')
-    NewUser = res.data.SignUp.User
-    NewUser.token = res.data.SignUp.token
+    expect(res.data.UserSignUp.User).to.be.a('object')
+    expect(res.data.UserSignUp.User.id).to.be.not.null
+    expect(res.data.UserSignUp.token).to.not.be.null
+    expect(res.data.UserSignUp.User.email).to.equal('jondoe@mail.com')
+    expect(res.data.UserSignUp.User.username).to.equal('jon')
+    expect(res.data.UserSignUp.User.fullname).to.equal('jondoe')
+    NewUser = res.data.UserSignUp.User
+    NewUser.token = res.data.UserSignUp.token
   })
 
   it('Should login after sign-up user properly', async () => {
     const LOGIN = `query{
-        Login(email: "jondoe@mail.com",password:"test") {
+        UserSignin(email: "jondoe@mail.com",password:"test") {
           User {
             id
             email
@@ -63,17 +63,17 @@ describe('🧪 - User Scenarios', async _ => {
         }
     }`
     const res = await driver.send({query: LOGIN}).then( res => res.body)
-    expect(res.data.Login.User).to.be.a('object')
-    expect(res.data.Login.User.id).to.be.not.null
-    expect(res.data.Login.token).to.not.be.null
-    expect(res.data.Login.User.email).to.equal('jondoe@mail.com')
-    NewUser = res.data.Login.User
-    NewUser.token = res.data.Login.token
+    expect(res.data.UserSignin.User).to.be.a('object')
+    expect(res.data.UserSignin.User.id).to.be.not.null
+    expect(res.data.UserSignin.token).to.not.be.null
+    expect(res.data.UserSignin.User.email).to.equal('jondoe@mail.com')
+    NewUser = res.data.UserSignin.User
+    NewUser.token = res.data.UserSignin.token
   })
   
   it('Should fail login after sign-up user properly given wrong password', async () => {
     const LOGIN = `query{
-        Login(email: "jondoe@mail.com",password:"tests") {
+        UserSignin(email: "jondoe@mail.com",password:"tests") {
           User {
             id
             email
@@ -83,14 +83,14 @@ describe('🧪 - User Scenarios', async _ => {
         }
     }`
     const res = await driver.send({query: LOGIN}).then( res => res.body)
-    expect(res.data.Login).to.be.null
+    expect(res.data.UserSignin).to.be.null
     expect(res.errors).to.be.an('array')
     expect(res.errors[0].message).to.contain(`Bad credentials`)
   })
 
   it('Should login user properly & provide new token', async () => {
     const LOGIN_NEW_TOKEN = `query {
-      LoginWithToken {
+      UserSigninWithToken {
           User {
             id
             email
@@ -101,26 +101,26 @@ describe('🧪 - User Scenarios', async _ => {
         }
     }`
     const res = await driver.send({query: LOGIN_NEW_TOKEN}).set("token",NewUser.token).then( res => res.body)
-    expect(res.data.LoginWithToken.User).to.be.a('object')
-    expect(res.data.LoginWithToken.User.id).to.be.not.null
-    expect(res.data.LoginWithToken.token).to.not.be.null
-    expect(res.data.LoginWithToken.token).to.not.be.equal(NewUser.token)
-    expect(res.data.LoginWithToken.User.email).to.equal('jondoe@mail.com')
-    expect(res.data.LoginWithToken.User.username).to.equal('jon')
-    expect(res.data.LoginWithToken.User.fullname).to.equal('jondoe')
-    NewUser = res.data.LoginWithToken.User
-    NewUser.token = res.data.LoginWithToken.token
+    expect(res.data.UserSigninWithToken.User).to.be.a('object')
+    expect(res.data.UserSigninWithToken.User.id).to.be.not.null
+    expect(res.data.UserSigninWithToken.token).to.not.be.null
+    expect(res.data.UserSigninWithToken.token).to.not.be.equal(NewUser.token)
+    expect(res.data.UserSigninWithToken.User.email).to.equal('jondoe@mail.com')
+    expect(res.data.UserSigninWithToken.User.username).to.equal('jon')
+    expect(res.data.UserSigninWithToken.User.fullname).to.equal('jondoe')
+    NewUser = res.data.UserSigninWithToken.User
+    NewUser.token = res.data.UserSigninWithToken.token
   })
 
   it('Should fail because of duplicate users', async () => {
     const CREATE_USER = `mutation{
-        User1: SignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
+        User1: UserSignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
           User {
             id
             username
           }
         }
-        User2: SignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
+        User2: UserSignUp(email: "jondoe-dup@mail.com",password:"test",username:"jon-dup",fullname:"jondoe") {
           User {
             id
           }
@@ -154,18 +154,18 @@ describe('🧪 - User Scenarios', async _ => {
 
   it('Should update user info using personal token', async () => {
     const UPDATE_USER = `mutation{
-        UpdateProfile(username:"newname") {
+        UserUpdate(username:"newname") {
           username
         }
     }`
     const res = await driver.send({query: UPDATE_USER}).set("token",NewUser.token).then( res => res.body)
-    expect(res.data.UpdateProfile).to.be.a('object').which.has.property('username')
-    expect(res.data.UpdateProfile.username).to.equal('newname')
+    expect(res.data.UserUpdate).to.be.a('object').which.has.property('username')
+    expect(res.data.UserUpdate.username).to.equal('newname')
   })
 
   it('Should fail update user info using invalid personal token', async () => {
     const UPDATE_USER = `mutation{
-        UpdateProfile(username:"newname") {
+        UserUpdate(username:"newname") {
           username
         }
     }`
@@ -177,13 +177,13 @@ describe('🧪 - User Scenarios', async _ => {
 
   it('Should fail update user info using no personal token', async () => {
     const UPDATE_USER = `mutation{
-        UpdateProfile(username:"newname") {
+        UserUpdate(username:"newname") {
           username
         }
     }`
     const res = await driver.send({query: UPDATE_USER}).then( res => res.body)
     expect(res).to.have.property('data')
-              .which.has.property('UpdateProfile')
+              .which.has.property('UserUpdate')
               .which.is.null
   })
 

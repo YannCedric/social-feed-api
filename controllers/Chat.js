@@ -42,7 +42,7 @@ class Chat {
         return await FindWithPaging('chatrooms',from,limit,{participantsIds: bearerId})
     }
 
-    static async CreateChatRoom({creatorId, title}){
+    static async ChatRoomCreate({creatorId, title}){
         return Create('chatrooms', {
             creatorId,
             participantsIds: [creatorId],
@@ -56,7 +56,7 @@ class Chat {
         return Update('chatrooms', { id, $push: {messages: message} })
     }
 
-    static async EditChatRoom({id,title,editorId}){
+    static async ChatRoomEdit({id,title,editorId}){
         const room = await FindOne("chatrooms",{_id:id})
         if(!room.creatorId.equals(editorId)){
             throw Error("User doesn't have the right to edit this chatroom.")
@@ -64,7 +64,7 @@ class Chat {
             return Update('chatrooms', {id,title} )
     }
 
-    static async DeleteChatRoom({id:_id,deleterId}){
+    static async ChatRoomDelete({id:_id,deleterId}){
         const room = await FindOne("chatrooms",{_id})
         if(!room.creatorId.equals(deleterId)){
             throw Error("User doesn't have the right to delete this chatroom.")
